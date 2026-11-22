@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-afroie}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-postgres-password}
+      POSTGRES_DB: ${POSTGRES_DB:-afroie}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-afroie}:${POSTGRES_PASSWORD:-local-postgres-password}@db:5432/${POSTGRES_DB:-afroie}?schema=public
+      SESSION_SECRET: ${SESSION_SECRET:-local-only-change-this-session-secret-before-any-deployment}
+      APP_ENV: ${APP_ENV:-development}
+      DEMO_DATA_ENABLED: ${DEMO_DATA_ENABLED:-true}
+      INVITE_ONLY: ${INVITE_ONLY:-false}
+      APP_ORIGIN: ${APP_ORIGIN:-}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      LOAD_DEMO_DATA: ${LOAD_DEMO_DATA:-true}
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

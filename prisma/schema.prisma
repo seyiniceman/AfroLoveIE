@@ -1,0 +1,181 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  MEMBER
+  MODERATOR
+}
+
+enum RelationshipIntent {
+  MARRIAGE
+  LONG_TERM
+}
+
+enum IntroductionStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum MatchStatus {
+  ACTIVE
+  UNMATCHED
+}
+
+enum ReportStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+}
+
+model User {
+  id                 String          @id @default(cuid())
+  email              String          @unique
+  passwordHash       String
+  role               Role            @default(MEMBER)
+  dateOfBirth        DateTime        @db.Date
+  sessionVersion     Int             @default(0)
+  createdAt          DateTime        @default(now())
+  profile            Profile?
+  photos             Photo[]
+  introductionsSent  Introduction[]  @relation("IntroductionsSent")
+  introductionsInbox Introduction[]  @relation("IntroductionsInbox")
+  matchesAsFirst     Match[]         @relation("MatchFirst")
+  matchesAsSecond    Match[]         @relation("MatchSecond")
+  messages           Message[]
+  blocksMade         Block[]         @relation("BlocksMade")
+  blocksReceived     Block[]         @relation("BlocksReceived")
+  reportsFiled       Report[]        @relation("ReportsFiled")
+  reportsAbout       Report[]        @relation("ReportsAbout")
+  reportsModerated   Report[]        @relation("ReportsModerated")
+  invitationUsed     Invitation?
+}
+
+model Profile {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  displayName          String
+  bio                  String              @default("")
+  city                 String              @default("Dublin")
+  relationshipIntent   RelationshipIntent @default(MARRIAGE)
+  identityText         String?
+  culturalBackground   String?
+  traditionPrompt      String              @default("")
+  futurePrompt         String              @default("")
+  updatedAt            DateTime            @updatedAt
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  userId    String
+  url       String
+  altText   String   @default("")
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, position])
+}
+
+model Introduction {
+  id            String             @id @default(cuid())
+  fromUserId    String
+  toUserId      String
+  promptKey     String
+  message       String             @db.VarChar(500)
+  status        IntroductionStatus @default(PENDING)
+  createdAt     DateTime           @default(now())
+  respondedAt   DateTime?
+  fromUser      User               @relation("IntroductionsSent", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser        User               @relation("IntroductionsInbox", fields: [toUserId], references: [id], onDelete: Cascade)
+  match         Match?
+
+  @@index([toUserId, status, createdAt])
+  @@index([fromUserId, toUserId, status])
+}
+
+model Match {
+  id          String      @id @default(cuid())
+  firstUserId String
+  secondUserId String
+  introductionId String  @unique
+  status      MatchStatus @default(ACTIVE)
+  createdAt   DateTime    @default(now())
+  endedAt     DateTime?
+  firstUser   User        @relation("MatchFirst", fields: [firstUserId], references: [id], onDelete: Cascade)
+  secondUser  User        @relation("MatchSecond", fields: [secondUserId], references: [id], onDelete: Cascade)
+  introduction Introduction @relation(fields: [introductionId], references: [id], onDelete: Cascade)
+  conversation Conversation?
+
+  @@unique([firstUserId, secondUserId])
+  @@index([firstUserId, status])
+  @@index([secondUserId, status])
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  matchId   String    @unique
+  createdAt DateTime  @default(now())
+  match     Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  senderId       String
+  body           String       @db.VarChar(2000)
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+  blocker   User     @relation("BlocksMade", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockedId, blockerId])
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  reporterId  String
+  subjectId   String
+  reason      String       @db.VarChar(80)
+  details     String       @default("") @db.VarChar(2000)
+  status      ReportStatus @default(OPEN)
+  moderatorId String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  reporter    User         @relation("ReportsFiled", fields: [reporterId], references: [id], onDelete: Cascade)
+  subject     User         @relation("ReportsAbout", fields: [subjectId], references: [id], onDelete: Cascade)
+  moderator   User?        @relation("ReportsModerated", fields: [moderatorId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+model Invitation {
+  id          String    @id @default(cuid())
+  codeHash    String    @unique
+  expiresAt   DateTime?
+  redeemedAt  DateTime?
+  redeemedById String?  @unique
+  createdAt   DateTime  @default(now())
+  redeemedBy  User?     @relation(fields: [redeemedById], references: [id], onDelete: SetNull)
+
+  @@index([expiresAt, redeemedAt])
+}

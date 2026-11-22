@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+coverage/
+.env
+.env.*
+!.env.example
+!.env.staging.example
+*.log
+*.tsbuildinfo
+prisma/*.db
+private-backups/
