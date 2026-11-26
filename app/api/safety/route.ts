@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRequestUser, jsonError, sameOriginMutationError } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { reportReasons } from "@/lib/validation";
+import { visibleMemberPhoto } from "@/lib/photo-access";
+import { parseImageDataUrl } from "@/lib/media";
 
 export async function POST(request: NextRequest) {
   const originError = sameOriginMutationError(request);
@@ -45,11 +47,39 @@ export async function POST(request: NextRequest) {
       return jsonError("Choose a report reason.");
     }
     if (details.length > 2000) return jsonError("Report details must be 2,000 characters or fewer.");
-    const report = await prisma.report.create({
-      data: { reporterId: user.id, subjectId, reason, details },
-      select: { id: true, status: true, createdAt: true },
-    });
-    return NextResponse.json({ report }, { status: 201 });
+    const evidenceKind = body.evidenceKind ?? "PROFILE";
+    const evidenceRef = typeof body.evidenceRef === "string" ? body.evidenceRef : "";
+    let evidenceData: string | null = null;
+    if (evidenceKind === "PHOTO") {
+      const photo = await visibleMemberPhoto(user, evidenceRef);
+      if (photo?.userId !== subjectId || !parseImageDataUrl(photo.url)) return jsonError("Photo not found.", 404);
+      evidenceData = photo.url;
+    } else if (evidenceKind === "MESSAGE") {
+      const message = await prisma.message.findFirst({
+        where: {
+          id: evidenceRef, senderId: subjectId,
+          conversation: { match: { OR: [{ firstUserId: user.id }, { secondUserId: user.id }] } },
+        },
+        select: { body: true },
+      });
+      if (!message) return jsonError("Message not found.", 404);
+      evidenceData = message.body;
+    } else if (evidenceKind !== "PROFILE" || evidenceRef) {
+      return jsonError("Choose a profile, photo, or message to report.");
+    }
+
+    try {
+      const report = await prisma.report.create({
+        data: { reporterId: user.id, subjectId, reason, details, evidenceKind, evidenceRef: evidenceRef || null, evidenceData },
+        select: { id: true, status: true, createdAt: true },
+      });
+      return NextResponse.json({ report }, { status: 201 });
+    } catch (error) {
+      if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
+        return jsonError("You already have an open report for this content.", 409);
+      }
+      throw error;
+    }
   }
 
   return jsonError("Choose block or report.");

@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db";
 export async function DELETE(request: NextRequest) {
   const originError = sameOriginMutationError(request);
   if (originError) return originError;
-  const user = await getRequestUser(request);
+  const user = await getRequestUser(request, { allowUnverified: true });
   if (!user) return jsonError("Sign in to delete your account.", 401);
   let body: Record<string, unknown>;
   try {

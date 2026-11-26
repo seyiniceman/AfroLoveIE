@@ -20,17 +20,40 @@ export type ProfileModel = runtime.Types.Result.DefaultSelection<Prisma.$Profile
 
 export type AggregateProfile = {
   _count: ProfileCountAggregateOutputType | null
+  _avg: ProfileAvgAggregateOutputType | null
+  _sum: ProfileSumAggregateOutputType | null
   _min: ProfileMinAggregateOutputType | null
   _max: ProfileMaxAggregateOutputType | null
+}
+
+export type ProfileAvgAggregateOutputType = {
+  onboardingStep: number | null
+}
+
+export type ProfileSumAggregateOutputType = {
+  onboardingStep: number | null
 }
 
 export type ProfileMinAggregateOutputType = {
   id: string | null
   userId: string | null
   displayName: string | null
+  published: boolean | null
   bio: string | null
   city: string | null
+  county: string | null
   relationshipIntent: $Enums.RelationshipIntent | null
+  sex: string | null
+  gender: string | null
+  showGender: boolean | null
+  ethnicity: string | null
+  showEthnicity: boolean | null
+  occupation: string | null
+  lookingFor: string | null
+  saturdayPrompt: string | null
+  meetupPrompt: string | null
+  onboardingStep: number | null
+  discoveryPaused: boolean | null
   identityText: string | null
   culturalBackground: string | null
   traditionPrompt: string | null
@@ -42,9 +65,22 @@ export type ProfileMaxAggregateOutputType = {
   id: string | null
   userId: string | null
   displayName: string | null
+  published: boolean | null
   bio: string | null
   city: string | null
+  county: string | null
   relationshipIntent: $Enums.RelationshipIntent | null
+  sex: string | null
+  gender: string | null
+  showGender: boolean | null
+  ethnicity: string | null
+  showEthnicity: boolean | null
+  occupation: string | null
+  lookingFor: string | null
+  saturdayPrompt: string | null
+  meetupPrompt: string | null
+  onboardingStep: number | null
+  discoveryPaused: boolean | null
   identityText: string | null
   culturalBackground: string | null
   traditionPrompt: string | null
@@ -56,9 +92,25 @@ export type ProfileCountAggregateOutputType = {
   id: number
   userId: number
   displayName: number
+  published: number
   bio: number
   city: number
+  county: number
   relationshipIntent: number
+  relationshipIntents: number
+  sex: number
+  gender: number
+  showGender: number
+  ethnicity: number
+  showEthnicity: number
+  occupation: number
+  interests: number
+  languages: number
+  lookingFor: number
+  saturdayPrompt: number
+  meetupPrompt: number
+  onboardingStep: number
+  discoveryPaused: number
   identityText: number
   culturalBackground: number
   traditionPrompt: number
@@ -68,13 +120,34 @@ export type ProfileCountAggregateOutputType = {
 }
 
 
+export type ProfileAvgAggregateInputType = {
+  onboardingStep?: true
+}
+
+export type ProfileSumAggregateInputType = {
+  onboardingStep?: true
+}
+
 export type ProfileMinAggregateInputType = {
   id?: true
   userId?: true
   displayName?: true
+  published?: true
   bio?: true
   city?: true
+  county?: true
   relationshipIntent?: true
+  sex?: true
+  gender?: true
+  showGender?: true
+  ethnicity?: true
+  showEthnicity?: true
+  occupation?: true
+  lookingFor?: true
+  saturdayPrompt?: true
+  meetupPrompt?: true
+  onboardingStep?: true
+  discoveryPaused?: true
   identityText?: true
   culturalBackground?: true
   traditionPrompt?: true
@@ -86,9 +159,22 @@ export type ProfileMaxAggregateInputType = {
   id?: true
   userId?: true
   displayName?: true
+  published?: true
   bio?: true
   city?: true
+  county?: true
   relationshipIntent?: true
+  sex?: true
+  gender?: true
+  showGender?: true
+  ethnicity?: true
+  showEthnicity?: true
+  occupation?: true
+  lookingFor?: true
+  saturdayPrompt?: true
+  meetupPrompt?: true
+  onboardingStep?: true
+  discoveryPaused?: true
   identityText?: true
   culturalBackground?: true
   traditionPrompt?: true
@@ -100,9 +186,25 @@ export type ProfileCountAggregateInputType = {
   id?: true
   userId?: true
   displayName?: true
+  published?: true
   bio?: true
   city?: true
+  county?: true
   relationshipIntent?: true
+  relationshipIntents?: true
+  sex?: true
+  gender?: true
+  showGender?: true
+  ethnicity?: true
+  showEthnicity?: true
+  occupation?: true
+  interests?: true
+  languages?: true
+  lookingFor?: true
+  saturdayPrompt?: true
+  meetupPrompt?: true
+  onboardingStep?: true
+  discoveryPaused?: true
   identityText?: true
   culturalBackground?: true
   traditionPrompt?: true
@@ -149,6 +251,18 @@ export type ProfileAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ProfileAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ProfileSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProfileMinAggregateInputType
@@ -179,6 +293,8 @@ export type ProfileGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: ProfileCountAggregateInputType | true
+  _avg?: ProfileAvgAggregateInputType
+  _sum?: ProfileSumAggregateInputType
   _min?: ProfileMinAggregateInputType
   _max?: ProfileMaxAggregateInputType
 }
@@ -187,15 +303,33 @@ export type ProfileGroupByOutputType = {
   id: string
   userId: string
   displayName: string
+  published: boolean
   bio: string
   city: string
+  county: string | null
   relationshipIntent: $Enums.RelationshipIntent
+  relationshipIntents: $Enums.RelationshipIntent[]
+  sex: string | null
+  gender: string | null
+  showGender: boolean
+  ethnicity: string | null
+  showEthnicity: boolean
+  occupation: string | null
+  interests: string[]
+  languages: string[]
+  lookingFor: string
+  saturdayPrompt: string
+  meetupPrompt: string
+  onboardingStep: number
+  discoveryPaused: boolean
   identityText: string | null
   culturalBackground: string | null
   traditionPrompt: string
   futurePrompt: string
   updatedAt: Date
   _count: ProfileCountAggregateOutputType | null
+  _avg: ProfileAvgAggregateOutputType | null
+  _sum: ProfileSumAggregateOutputType | null
   _min: ProfileMinAggregateOutputType | null
   _max: ProfileMaxAggregateOutputType | null
 }
@@ -222,9 +356,25 @@ export type ProfileWhereInput = {
   id?: Prisma.StringFilter<"Profile"> | string
   userId?: Prisma.StringFilter<"Profile"> | string
   displayName?: Prisma.StringFilter<"Profile"> | string
+  published?: Prisma.BoolFilter<"Profile"> | boolean
   bio?: Prisma.StringFilter<"Profile"> | string
   city?: Prisma.StringFilter<"Profile"> | string
+  county?: Prisma.StringNullableFilter<"Profile"> | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFilter<"Profile"> | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.EnumRelationshipIntentNullableListFilter<"Profile">
+  sex?: Prisma.StringNullableFilter<"Profile"> | string | null
+  gender?: Prisma.StringNullableFilter<"Profile"> | string | null
+  showGender?: Prisma.BoolFilter<"Profile"> | boolean
+  ethnicity?: Prisma.StringNullableFilter<"Profile"> | string | null
+  showEthnicity?: Prisma.BoolFilter<"Profile"> | boolean
+  occupation?: Prisma.StringNullableFilter<"Profile"> | string | null
+  interests?: Prisma.StringNullableListFilter<"Profile">
+  languages?: Prisma.StringNullableListFilter<"Profile">
+  lookingFor?: Prisma.StringFilter<"Profile"> | string
+  saturdayPrompt?: Prisma.StringFilter<"Profile"> | string
+  meetupPrompt?: Prisma.StringFilter<"Profile"> | string
+  onboardingStep?: Prisma.IntFilter<"Profile"> | number
+  discoveryPaused?: Prisma.BoolFilter<"Profile"> | boolean
   identityText?: Prisma.StringNullableFilter<"Profile"> | string | null
   culturalBackground?: Prisma.StringNullableFilter<"Profile"> | string | null
   traditionPrompt?: Prisma.StringFilter<"Profile"> | string
@@ -237,9 +387,25 @@ export type ProfileOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  county?: Prisma.SortOrderInput | Prisma.SortOrder
   relationshipIntent?: Prisma.SortOrder
+  relationshipIntents?: Prisma.SortOrder
+  sex?: Prisma.SortOrderInput | Prisma.SortOrder
+  gender?: Prisma.SortOrderInput | Prisma.SortOrder
+  showGender?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrderInput | Prisma.SortOrder
+  showEthnicity?: Prisma.SortOrder
+  occupation?: Prisma.SortOrderInput | Prisma.SortOrder
+  interests?: Prisma.SortOrder
+  languages?: Prisma.SortOrder
+  lookingFor?: Prisma.SortOrder
+  saturdayPrompt?: Prisma.SortOrder
+  meetupPrompt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  discoveryPaused?: Prisma.SortOrder
   identityText?: Prisma.SortOrderInput | Prisma.SortOrder
   culturalBackground?: Prisma.SortOrderInput | Prisma.SortOrder
   traditionPrompt?: Prisma.SortOrder
@@ -255,9 +421,25 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProfileWhereInput[]
   NOT?: Prisma.ProfileWhereInput | Prisma.ProfileWhereInput[]
   displayName?: Prisma.StringFilter<"Profile"> | string
+  published?: Prisma.BoolFilter<"Profile"> | boolean
   bio?: Prisma.StringFilter<"Profile"> | string
   city?: Prisma.StringFilter<"Profile"> | string
+  county?: Prisma.StringNullableFilter<"Profile"> | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFilter<"Profile"> | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.EnumRelationshipIntentNullableListFilter<"Profile">
+  sex?: Prisma.StringNullableFilter<"Profile"> | string | null
+  gender?: Prisma.StringNullableFilter<"Profile"> | string | null
+  showGender?: Prisma.BoolFilter<"Profile"> | boolean
+  ethnicity?: Prisma.StringNullableFilter<"Profile"> | string | null
+  showEthnicity?: Prisma.BoolFilter<"Profile"> | boolean
+  occupation?: Prisma.StringNullableFilter<"Profile"> | string | null
+  interests?: Prisma.StringNullableListFilter<"Profile">
+  languages?: Prisma.StringNullableListFilter<"Profile">
+  lookingFor?: Prisma.StringFilter<"Profile"> | string
+  saturdayPrompt?: Prisma.StringFilter<"Profile"> | string
+  meetupPrompt?: Prisma.StringFilter<"Profile"> | string
+  onboardingStep?: Prisma.IntFilter<"Profile"> | number
+  discoveryPaused?: Prisma.BoolFilter<"Profile"> | boolean
   identityText?: Prisma.StringNullableFilter<"Profile"> | string | null
   culturalBackground?: Prisma.StringNullableFilter<"Profile"> | string | null
   traditionPrompt?: Prisma.StringFilter<"Profile"> | string
@@ -270,17 +452,35 @@ export type ProfileOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  county?: Prisma.SortOrderInput | Prisma.SortOrder
   relationshipIntent?: Prisma.SortOrder
+  relationshipIntents?: Prisma.SortOrder
+  sex?: Prisma.SortOrderInput | Prisma.SortOrder
+  gender?: Prisma.SortOrderInput | Prisma.SortOrder
+  showGender?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrderInput | Prisma.SortOrder
+  showEthnicity?: Prisma.SortOrder
+  occupation?: Prisma.SortOrderInput | Prisma.SortOrder
+  interests?: Prisma.SortOrder
+  languages?: Prisma.SortOrder
+  lookingFor?: Prisma.SortOrder
+  saturdayPrompt?: Prisma.SortOrder
+  meetupPrompt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  discoveryPaused?: Prisma.SortOrder
   identityText?: Prisma.SortOrderInput | Prisma.SortOrder
   culturalBackground?: Prisma.SortOrderInput | Prisma.SortOrder
   traditionPrompt?: Prisma.SortOrder
   futurePrompt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProfileCountOrderByAggregateInput
+  _avg?: Prisma.ProfileAvgOrderByAggregateInput
   _max?: Prisma.ProfileMaxOrderByAggregateInput
   _min?: Prisma.ProfileMinOrderByAggregateInput
+  _sum?: Prisma.ProfileSumOrderByAggregateInput
 }
 
 export type ProfileScalarWhereWithAggregatesInput = {
@@ -290,9 +490,25 @@ export type ProfileScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   userId?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   displayName?: Prisma.StringWithAggregatesFilter<"Profile"> | string
+  published?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
   bio?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   city?: Prisma.StringWithAggregatesFilter<"Profile"> | string
+  county?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentWithAggregatesFilter<"Profile"> | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.EnumRelationshipIntentNullableListFilter<"Profile">
+  sex?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
+  gender?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
+  showGender?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
+  ethnicity?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
+  showEthnicity?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
+  occupation?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
+  interests?: Prisma.StringNullableListFilter<"Profile">
+  languages?: Prisma.StringNullableListFilter<"Profile">
+  lookingFor?: Prisma.StringWithAggregatesFilter<"Profile"> | string
+  saturdayPrompt?: Prisma.StringWithAggregatesFilter<"Profile"> | string
+  meetupPrompt?: Prisma.StringWithAggregatesFilter<"Profile"> | string
+  onboardingStep?: Prisma.IntWithAggregatesFilter<"Profile"> | number
+  discoveryPaused?: Prisma.BoolWithAggregatesFilter<"Profile"> | boolean
   identityText?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   culturalBackground?: Prisma.StringNullableWithAggregatesFilter<"Profile"> | string | null
   traditionPrompt?: Prisma.StringWithAggregatesFilter<"Profile"> | string
@@ -303,9 +519,25 @@ export type ProfileScalarWhereWithAggregatesInput = {
 export type ProfileCreateInput = {
   id?: string
   displayName: string
+  published?: boolean
   bio?: string
   city?: string
+  county?: string | null
   relationshipIntent?: $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileCreaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: string | null
+  gender?: string | null
+  showGender?: boolean
+  ethnicity?: string | null
+  showEthnicity?: boolean
+  occupation?: string | null
+  interests?: Prisma.ProfileCreateinterestsInput | string[]
+  languages?: Prisma.ProfileCreatelanguagesInput | string[]
+  lookingFor?: string
+  saturdayPrompt?: string
+  meetupPrompt?: string
+  onboardingStep?: number
+  discoveryPaused?: boolean
   identityText?: string | null
   culturalBackground?: string | null
   traditionPrompt?: string
@@ -318,9 +550,25 @@ export type ProfileUncheckedCreateInput = {
   id?: string
   userId: string
   displayName: string
+  published?: boolean
   bio?: string
   city?: string
+  county?: string | null
   relationshipIntent?: $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileCreaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: string | null
+  gender?: string | null
+  showGender?: boolean
+  ethnicity?: string | null
+  showEthnicity?: boolean
+  occupation?: string | null
+  interests?: Prisma.ProfileCreateinterestsInput | string[]
+  languages?: Prisma.ProfileCreatelanguagesInput | string[]
+  lookingFor?: string
+  saturdayPrompt?: string
+  meetupPrompt?: string
+  onboardingStep?: number
+  discoveryPaused?: boolean
   identityText?: string | null
   culturalBackground?: string | null
   traditionPrompt?: string
@@ -331,9 +579,25 @@ export type ProfileUncheckedCreateInput = {
 export type ProfileUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
+  county?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFieldUpdateOperationsInput | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileUpdaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showGender?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ethnicity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showEthnicity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  occupation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interests?: Prisma.ProfileUpdateinterestsInput | string[]
+  languages?: Prisma.ProfileUpdatelanguagesInput | string[]
+  lookingFor?: Prisma.StringFieldUpdateOperationsInput | string
+  saturdayPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  meetupPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  discoveryPaused?: Prisma.BoolFieldUpdateOperationsInput | boolean
   identityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   culturalBackground?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   traditionPrompt?: Prisma.StringFieldUpdateOperationsInput | string
@@ -346,9 +610,25 @@ export type ProfileUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
+  county?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFieldUpdateOperationsInput | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileUpdaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showGender?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ethnicity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showEthnicity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  occupation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interests?: Prisma.ProfileUpdateinterestsInput | string[]
+  languages?: Prisma.ProfileUpdatelanguagesInput | string[]
+  lookingFor?: Prisma.StringFieldUpdateOperationsInput | string
+  saturdayPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  meetupPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  discoveryPaused?: Prisma.BoolFieldUpdateOperationsInput | boolean
   identityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   culturalBackground?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   traditionPrompt?: Prisma.StringFieldUpdateOperationsInput | string
@@ -360,9 +640,25 @@ export type ProfileCreateManyInput = {
   id?: string
   userId: string
   displayName: string
+  published?: boolean
   bio?: string
   city?: string
+  county?: string | null
   relationshipIntent?: $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileCreaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: string | null
+  gender?: string | null
+  showGender?: boolean
+  ethnicity?: string | null
+  showEthnicity?: boolean
+  occupation?: string | null
+  interests?: Prisma.ProfileCreateinterestsInput | string[]
+  languages?: Prisma.ProfileCreatelanguagesInput | string[]
+  lookingFor?: string
+  saturdayPrompt?: string
+  meetupPrompt?: string
+  onboardingStep?: number
+  discoveryPaused?: boolean
   identityText?: string | null
   culturalBackground?: string | null
   traditionPrompt?: string
@@ -373,9 +669,25 @@ export type ProfileCreateManyInput = {
 export type ProfileUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
+  county?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFieldUpdateOperationsInput | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileUpdaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showGender?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ethnicity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showEthnicity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  occupation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interests?: Prisma.ProfileUpdateinterestsInput | string[]
+  languages?: Prisma.ProfileUpdatelanguagesInput | string[]
+  lookingFor?: Prisma.StringFieldUpdateOperationsInput | string
+  saturdayPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  meetupPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  discoveryPaused?: Prisma.BoolFieldUpdateOperationsInput | boolean
   identityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   culturalBackground?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   traditionPrompt?: Prisma.StringFieldUpdateOperationsInput | string
@@ -387,9 +699,25 @@ export type ProfileUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
+  county?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFieldUpdateOperationsInput | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileUpdaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showGender?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ethnicity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showEthnicity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  occupation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interests?: Prisma.ProfileUpdateinterestsInput | string[]
+  languages?: Prisma.ProfileUpdatelanguagesInput | string[]
+  lookingFor?: Prisma.StringFieldUpdateOperationsInput | string
+  saturdayPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  meetupPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  discoveryPaused?: Prisma.BoolFieldUpdateOperationsInput | boolean
   identityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   culturalBackground?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   traditionPrompt?: Prisma.StringFieldUpdateOperationsInput | string
@@ -402,13 +730,45 @@ export type ProfileNullableScalarRelationFilter = {
   isNot?: Prisma.ProfileWhereInput | null
 }
 
+export type EnumRelationshipIntentNullableListFilter<$PrismaModel = never> = {
+  equals?: $Enums.RelationshipIntent[] | Prisma.ListEnumRelationshipIntentFieldRefInput<$PrismaModel> | null
+  has?: $Enums.RelationshipIntent | Prisma.EnumRelationshipIntentFieldRefInput<$PrismaModel> | null
+  hasEvery?: $Enums.RelationshipIntent[] | Prisma.ListEnumRelationshipIntentFieldRefInput<$PrismaModel>
+  hasSome?: $Enums.RelationshipIntent[] | Prisma.ListEnumRelationshipIntentFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type ProfileCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  county?: Prisma.SortOrder
   relationshipIntent?: Prisma.SortOrder
+  relationshipIntents?: Prisma.SortOrder
+  sex?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  showGender?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrder
+  showEthnicity?: Prisma.SortOrder
+  occupation?: Prisma.SortOrder
+  interests?: Prisma.SortOrder
+  languages?: Prisma.SortOrder
+  lookingFor?: Prisma.SortOrder
+  saturdayPrompt?: Prisma.SortOrder
+  meetupPrompt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  discoveryPaused?: Prisma.SortOrder
   identityText?: Prisma.SortOrder
   culturalBackground?: Prisma.SortOrder
   traditionPrompt?: Prisma.SortOrder
@@ -416,13 +776,30 @@ export type ProfileCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type ProfileAvgOrderByAggregateInput = {
+  onboardingStep?: Prisma.SortOrder
+}
+
 export type ProfileMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  county?: Prisma.SortOrder
   relationshipIntent?: Prisma.SortOrder
+  sex?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  showGender?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrder
+  showEthnicity?: Prisma.SortOrder
+  occupation?: Prisma.SortOrder
+  lookingFor?: Prisma.SortOrder
+  saturdayPrompt?: Prisma.SortOrder
+  meetupPrompt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  discoveryPaused?: Prisma.SortOrder
   identityText?: Prisma.SortOrder
   culturalBackground?: Prisma.SortOrder
   traditionPrompt?: Prisma.SortOrder
@@ -434,14 +811,31 @@ export type ProfileMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  published?: Prisma.SortOrder
   bio?: Prisma.SortOrder
   city?: Prisma.SortOrder
+  county?: Prisma.SortOrder
   relationshipIntent?: Prisma.SortOrder
+  sex?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  showGender?: Prisma.SortOrder
+  ethnicity?: Prisma.SortOrder
+  showEthnicity?: Prisma.SortOrder
+  occupation?: Prisma.SortOrder
+  lookingFor?: Prisma.SortOrder
+  saturdayPrompt?: Prisma.SortOrder
+  meetupPrompt?: Prisma.SortOrder
+  onboardingStep?: Prisma.SortOrder
+  discoveryPaused?: Prisma.SortOrder
   identityText?: Prisma.SortOrder
   culturalBackground?: Prisma.SortOrder
   traditionPrompt?: Prisma.SortOrder
   futurePrompt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type ProfileSumOrderByAggregateInput = {
+  onboardingStep?: Prisma.SortOrder
 }
 
 export type ProfileCreateNestedOneWithoutUserInput = {
@@ -476,20 +870,67 @@ export type ProfileUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutUserInput, Prisma.ProfileUpdateWithoutUserInput>, Prisma.ProfileUncheckedUpdateWithoutUserInput>
 }
 
-export type EnumRelationshipIntentFieldUpdateOperationsInput = {
-  set?: $Enums.RelationshipIntent
+export type ProfileCreaterelationshipIntentsInput = {
+  set: $Enums.RelationshipIntent[]
+}
+
+export type ProfileCreateinterestsInput = {
+  set: string[]
+}
+
+export type ProfileCreatelanguagesInput = {
+  set: string[]
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
+export type EnumRelationshipIntentFieldUpdateOperationsInput = {
+  set?: $Enums.RelationshipIntent
+}
+
+export type ProfileUpdaterelationshipIntentsInput = {
+  set?: $Enums.RelationshipIntent[]
+  push?: $Enums.RelationshipIntent | $Enums.RelationshipIntent[]
+}
+
+export type ProfileUpdateinterestsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type ProfileUpdatelanguagesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type ProfileCreateWithoutUserInput = {
   id?: string
   displayName: string
+  published?: boolean
   bio?: string
   city?: string
+  county?: string | null
   relationshipIntent?: $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileCreaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: string | null
+  gender?: string | null
+  showGender?: boolean
+  ethnicity?: string | null
+  showEthnicity?: boolean
+  occupation?: string | null
+  interests?: Prisma.ProfileCreateinterestsInput | string[]
+  languages?: Prisma.ProfileCreatelanguagesInput | string[]
+  lookingFor?: string
+  saturdayPrompt?: string
+  meetupPrompt?: string
+  onboardingStep?: number
+  discoveryPaused?: boolean
   identityText?: string | null
   culturalBackground?: string | null
   traditionPrompt?: string
@@ -500,9 +941,25 @@ export type ProfileCreateWithoutUserInput = {
 export type ProfileUncheckedCreateWithoutUserInput = {
   id?: string
   displayName: string
+  published?: boolean
   bio?: string
   city?: string
+  county?: string | null
   relationshipIntent?: $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileCreaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: string | null
+  gender?: string | null
+  showGender?: boolean
+  ethnicity?: string | null
+  showEthnicity?: boolean
+  occupation?: string | null
+  interests?: Prisma.ProfileCreateinterestsInput | string[]
+  languages?: Prisma.ProfileCreatelanguagesInput | string[]
+  lookingFor?: string
+  saturdayPrompt?: string
+  meetupPrompt?: string
+  onboardingStep?: number
+  discoveryPaused?: boolean
   identityText?: string | null
   culturalBackground?: string | null
   traditionPrompt?: string
@@ -529,9 +986,25 @@ export type ProfileUpdateToOneWithWhereWithoutUserInput = {
 export type ProfileUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
+  county?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFieldUpdateOperationsInput | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileUpdaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showGender?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ethnicity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showEthnicity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  occupation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interests?: Prisma.ProfileUpdateinterestsInput | string[]
+  languages?: Prisma.ProfileUpdatelanguagesInput | string[]
+  lookingFor?: Prisma.StringFieldUpdateOperationsInput | string
+  saturdayPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  meetupPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  discoveryPaused?: Prisma.BoolFieldUpdateOperationsInput | boolean
   identityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   culturalBackground?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   traditionPrompt?: Prisma.StringFieldUpdateOperationsInput | string
@@ -542,9 +1015,25 @@ export type ProfileUpdateWithoutUserInput = {
 export type ProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   bio?: Prisma.StringFieldUpdateOperationsInput | string
   city?: Prisma.StringFieldUpdateOperationsInput | string
+  county?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipIntent?: Prisma.EnumRelationshipIntentFieldUpdateOperationsInput | $Enums.RelationshipIntent
+  relationshipIntents?: Prisma.ProfileUpdaterelationshipIntentsInput | $Enums.RelationshipIntent[]
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showGender?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  ethnicity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  showEthnicity?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  occupation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  interests?: Prisma.ProfileUpdateinterestsInput | string[]
+  languages?: Prisma.ProfileUpdatelanguagesInput | string[]
+  lookingFor?: Prisma.StringFieldUpdateOperationsInput | string
+  saturdayPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  meetupPrompt?: Prisma.StringFieldUpdateOperationsInput | string
+  onboardingStep?: Prisma.IntFieldUpdateOperationsInput | number
+  discoveryPaused?: Prisma.BoolFieldUpdateOperationsInput | boolean
   identityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   culturalBackground?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   traditionPrompt?: Prisma.StringFieldUpdateOperationsInput | string
@@ -558,9 +1047,25 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id?: boolean
   userId?: boolean
   displayName?: boolean
+  published?: boolean
   bio?: boolean
   city?: boolean
+  county?: boolean
   relationshipIntent?: boolean
+  relationshipIntents?: boolean
+  sex?: boolean
+  gender?: boolean
+  showGender?: boolean
+  ethnicity?: boolean
+  showEthnicity?: boolean
+  occupation?: boolean
+  interests?: boolean
+  languages?: boolean
+  lookingFor?: boolean
+  saturdayPrompt?: boolean
+  meetupPrompt?: boolean
+  onboardingStep?: boolean
+  discoveryPaused?: boolean
   identityText?: boolean
   culturalBackground?: boolean
   traditionPrompt?: boolean
@@ -573,9 +1078,25 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   userId?: boolean
   displayName?: boolean
+  published?: boolean
   bio?: boolean
   city?: boolean
+  county?: boolean
   relationshipIntent?: boolean
+  relationshipIntents?: boolean
+  sex?: boolean
+  gender?: boolean
+  showGender?: boolean
+  ethnicity?: boolean
+  showEthnicity?: boolean
+  occupation?: boolean
+  interests?: boolean
+  languages?: boolean
+  lookingFor?: boolean
+  saturdayPrompt?: boolean
+  meetupPrompt?: boolean
+  onboardingStep?: boolean
+  discoveryPaused?: boolean
   identityText?: boolean
   culturalBackground?: boolean
   traditionPrompt?: boolean
@@ -588,9 +1109,25 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id?: boolean
   userId?: boolean
   displayName?: boolean
+  published?: boolean
   bio?: boolean
   city?: boolean
+  county?: boolean
   relationshipIntent?: boolean
+  relationshipIntents?: boolean
+  sex?: boolean
+  gender?: boolean
+  showGender?: boolean
+  ethnicity?: boolean
+  showEthnicity?: boolean
+  occupation?: boolean
+  interests?: boolean
+  languages?: boolean
+  lookingFor?: boolean
+  saturdayPrompt?: boolean
+  meetupPrompt?: boolean
+  onboardingStep?: boolean
+  discoveryPaused?: boolean
   identityText?: boolean
   culturalBackground?: boolean
   traditionPrompt?: boolean
@@ -603,9 +1140,25 @@ export type ProfileSelectScalar = {
   id?: boolean
   userId?: boolean
   displayName?: boolean
+  published?: boolean
   bio?: boolean
   city?: boolean
+  county?: boolean
   relationshipIntent?: boolean
+  relationshipIntents?: boolean
+  sex?: boolean
+  gender?: boolean
+  showGender?: boolean
+  ethnicity?: boolean
+  showEthnicity?: boolean
+  occupation?: boolean
+  interests?: boolean
+  languages?: boolean
+  lookingFor?: boolean
+  saturdayPrompt?: boolean
+  meetupPrompt?: boolean
+  onboardingStep?: boolean
+  discoveryPaused?: boolean
   identityText?: boolean
   culturalBackground?: boolean
   traditionPrompt?: boolean
@@ -613,7 +1166,7 @@ export type ProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "displayName" | "bio" | "city" | "relationshipIntent" | "identityText" | "culturalBackground" | "traditionPrompt" | "futurePrompt" | "updatedAt", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "displayName" | "published" | "bio" | "city" | "county" | "relationshipIntent" | "relationshipIntents" | "sex" | "gender" | "showGender" | "ethnicity" | "showEthnicity" | "occupation" | "interests" | "languages" | "lookingFor" | "saturdayPrompt" | "meetupPrompt" | "onboardingStep" | "discoveryPaused" | "identityText" | "culturalBackground" | "traditionPrompt" | "futurePrompt" | "updatedAt", ExtArgs["result"]["profile"]>
 export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -633,9 +1186,25 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id: string
     userId: string
     displayName: string
+    published: boolean
     bio: string
     city: string
+    county: string | null
     relationshipIntent: $Enums.RelationshipIntent
+    relationshipIntents: $Enums.RelationshipIntent[]
+    sex: string | null
+    gender: string | null
+    showGender: boolean
+    ethnicity: string | null
+    showEthnicity: boolean
+    occupation: string | null
+    interests: string[]
+    languages: string[]
+    lookingFor: string
+    saturdayPrompt: string
+    meetupPrompt: string
+    onboardingStep: number
+    discoveryPaused: boolean
     identityText: string | null
     culturalBackground: string | null
     traditionPrompt: string
@@ -1068,9 +1637,25 @@ export interface ProfileFieldRefs {
   readonly id: Prisma.FieldRef<"Profile", 'String'>
   readonly userId: Prisma.FieldRef<"Profile", 'String'>
   readonly displayName: Prisma.FieldRef<"Profile", 'String'>
+  readonly published: Prisma.FieldRef<"Profile", 'Boolean'>
   readonly bio: Prisma.FieldRef<"Profile", 'String'>
   readonly city: Prisma.FieldRef<"Profile", 'String'>
+  readonly county: Prisma.FieldRef<"Profile", 'String'>
   readonly relationshipIntent: Prisma.FieldRef<"Profile", 'RelationshipIntent'>
+  readonly relationshipIntents: Prisma.FieldRef<"Profile", 'RelationshipIntent[]'>
+  readonly sex: Prisma.FieldRef<"Profile", 'String'>
+  readonly gender: Prisma.FieldRef<"Profile", 'String'>
+  readonly showGender: Prisma.FieldRef<"Profile", 'Boolean'>
+  readonly ethnicity: Prisma.FieldRef<"Profile", 'String'>
+  readonly showEthnicity: Prisma.FieldRef<"Profile", 'Boolean'>
+  readonly occupation: Prisma.FieldRef<"Profile", 'String'>
+  readonly interests: Prisma.FieldRef<"Profile", 'String[]'>
+  readonly languages: Prisma.FieldRef<"Profile", 'String[]'>
+  readonly lookingFor: Prisma.FieldRef<"Profile", 'String'>
+  readonly saturdayPrompt: Prisma.FieldRef<"Profile", 'String'>
+  readonly meetupPrompt: Prisma.FieldRef<"Profile", 'String'>
+  readonly onboardingStep: Prisma.FieldRef<"Profile", 'Int'>
+  readonly discoveryPaused: Prisma.FieldRef<"Profile", 'Boolean'>
   readonly identityText: Prisma.FieldRef<"Profile", 'String'>
   readonly culturalBackground: Prisma.FieldRef<"Profile", 'String'>
   readonly traditionPrompt: Prisma.FieldRef<"Profile", 'String'>

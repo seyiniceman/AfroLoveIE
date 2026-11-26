@@ -76,6 +76,7 @@ async function main() {
   for (const account of accounts) {
     const profileData = {
       displayName: account.displayName,
+      published: true,
       bio: account.bio,
       city: account.city,
       relationshipIntent: RelationshipIntent.MARRIAGE,
@@ -87,6 +88,7 @@ async function main() {
     const user = await prisma.user.upsert({
       where: { email: account.email },
       update: {
+        emailVerifiedAt: new Date(),
         profile: {
           upsert: {
             create: profileData,
@@ -96,9 +98,11 @@ async function main() {
       },
       create: {
         email: account.email,
+        username: `demo_${account.email.split("@")[0]}`,
         passwordHash,
         role: account.role,
         dateOfBirth: new Date("1992-05-15T00:00:00.000Z"),
+        emailVerifiedAt: new Date(),
         profile: { create: profileData },
       },
     });

@@ -39,25 +39,58 @@ export async function PUT(request: NextRequest) {
     return jsonError("All profile photos together must be 6 MB or smaller.");
   }
 
-  const { photos, ...profile } = parsed.data;
+  const { photos, saveMode, relationshipIntents, ...profile } = parsed.data;
+  const selectedIntents = [...new Set(relationshipIntents ?? [profile.relationshipIntent])];
+  const data = {
+    ...profile,
+    relationshipIntents: selectedIntents,
+    relationshipIntent: selectedIntents[0] ?? profile.relationshipIntent,
+  };
+  if (saveMode === "draft" && user.profile?.published) {
+    return jsonError("Published profiles must be saved from the profile editor.", 409);
+  }
   const saved = await prisma.$transaction(async (tx) => {
-    const updatedProfile = await tx.profile.upsert({
-      where: { userId: user.id },
-      create: { userId: user.id, ...profile },
-      update: profile,
-    });
+    if (saveMode === "draft") {
+      const updated = await tx.profile.updateMany({
+        where: { userId: user.id, published: false },
+        data,
+      });
+      if (updated.count !== 1) return null;
+    } else {
+      await tx.profile.upsert({
+        where: { userId: user.id },
+        create: { userId: user.id, ...data, published: true },
+        update: { ...data, published: true },
+      });
+    }
     await tx.photo.deleteMany({ where: { userId: user.id } });
     if (photos.length) {
       await tx.photo.createMany({
         data: photos.map((photo, position) => ({ ...photo, userId: user.id, position })),
       });
     }
-    return updatedProfile;
+    const savedProfile = await tx.profile.findUniqueOrThrow({ where: { userId: user.id } });
+    const savedPhotos = await tx.photo.findMany({
+      where: { userId: user.id },
+      orderBy: { position: "asc" },
+    });
+    return { profile: savedProfile, photos: savedPhotos };
   });
+  if (!saved) return jsonError("This profile changed. Reload before continuing.", 409);
+  return NextResponse.json(saved);
+}
 
-  const savedPhotos = await prisma.photo.findMany({
+export async function PATCH(request: NextRequest) {
+  const originError = sameOriginMutationError(request);
+  if (originError) return originError;
+  const user = await getRequestUser(request);
+  if (!user) return jsonError("Sign in to change your discovery settings.", 401);
+  if (!user.profile?.published) return jsonError("Publish your profile first.", 409);
+  const body = await request.json().catch(() => null);
+  if (typeof body?.discoveryPaused !== "boolean") return jsonError("Choose whether to pause discovery.");
+  const profile = await prisma.profile.update({
     where: { userId: user.id },
-    orderBy: { position: "asc" },
+    data: { discoveryPaused: body.discoveryPaused },
   });
-  return NextResponse.json({ profile: saved, photos: savedPhotos });
+  return NextResponse.json({ discoveryPaused: profile.discoveryPaused });
 }

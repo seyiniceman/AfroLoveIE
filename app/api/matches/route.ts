@@ -3,6 +3,7 @@ import { blockedEitherWay, getRequestUser, jsonError } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ageOnDate } from "@/lib/validation";
 import { protectedPhoto } from "@/lib/media";
+import { visibleProfile } from "@/lib/profile-options";
 
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
@@ -16,7 +17,10 @@ export async function GET(request: NextRequest) {
       firstUser: { select: { id: true, dateOfBirth: true, profile: true, photos: { orderBy: { position: "asc" } } } },
       secondUser: { select: { id: true, dateOfBirth: true, profile: true, photos: { orderBy: { position: "asc" } } } },
       conversation: {
-        include: { messages: { orderBy: { createdAt: "desc" }, take: 1 } },
+        include: {
+          messages: { orderBy: { createdAt: "desc" }, take: 1, select: { body: true, createdAt: true } },
+          _count: { select: { messages: { where: { readAt: null, senderId: { not: user.id } } } } },
+        },
       },
     },
     orderBy: { createdAt: "desc" },
@@ -32,10 +36,11 @@ export async function GET(request: NextRequest) {
         otherUser: {
           id: other.id,
           age: ageOnDate(other.dateOfBirth),
-          profile: other.profile,
+          profile: other.profile ? visibleProfile(other.profile) : null,
           photos: other.photos.map(protectedPhoto),
         },
         lastMessage: match.conversation?.messages[0] ?? null,
+        unreadCount: match.conversation?._count.messages ?? 0,
       };
     }),
   );

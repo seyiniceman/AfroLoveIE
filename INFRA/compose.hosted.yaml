@@ -1,0 +1,43 @@
+services:
+  app:
+    image: ${APP_IMAGE:?Set APP_IMAGE to the ECR image digest}
+    env_file: .env.app
+    environment:
+      APP_ENV: staging
+      APP_ORIGIN: ${APP_ORIGIN:-https://localhost:8443}
+      NODE_ENV: production
+      INVITE_ONLY: "true"
+      DEMO_DATA_ENABLED: "false"
+      LOAD_DEMO_DATA: "false"
+      RUN_MIGRATIONS: "false"
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+    volumes:
+      - ./rds-ca.pem:/etc/ssl/certs/rds-ca.pem:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+  caddy:
+    image: ${CADDY_IMAGE:?Set CADDY_IMAGE to an approved digest}
+    environment:
+      STAGING_HOST: ${STAGING_HOST:-localhost}
+    ports:
+      - "${CADDY_BIND:-127.0.0.1}:80:80"
+      - "${CADDY_BIND:-127.0.0.1}:443:443"
+    volumes:
+      - ${CADDY_CONFIG:-./Caddyfile.private}:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  caddy-data:
+  caddy-config:

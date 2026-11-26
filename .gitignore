@@ -6,6 +6,7 @@ coverage/
 .env.*
 !.env.example
 !.env.staging.example
+!.env.local-staging.example
 *.log
 *.tsbuildinfo
 prisma/*.db

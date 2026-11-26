@@ -3,11 +3,12 @@ import { blockedEitherWay, getRequestUser, jsonError, sameOriginMutationError } 
 import { prisma } from "@/lib/db";
 import { ageOnDate } from "@/lib/validation";
 import { protectedPhoto } from "@/lib/media";
+import { canDiscover, compatibleIntents, isPromptKey, visibleProfile } from "@/lib/profile-options";
 
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
   if (!user) return jsonError("Sign in to discover people.", 401);
-  if (!user.profile) return NextResponse.json({ profiles: [] });
+  if (!user.profile?.published || user.profile.discoveryPaused) return NextResponse.json({ profiles: [] });
 
   const [blocks, matches, sentIntros] = await Promise.all([
     prisma.block.findMany({
@@ -35,9 +36,21 @@ export async function GET(request: NextRequest) {
   const profiles = await prisma.profile.findMany({
     where: {
       userId: { notIn: [...excluded] },
-      city: user.profile.city,
-      relationshipIntent: user.profile.relationshipIntent,
-      user: { role: "MEMBER" },
+      published: true,
+      discoveryPaused: false,
+      AND: [{
+        OR: user.profile.county
+          ? [
+              { county: user.profile.county },
+              { county: null, city: { equals: user.profile.city, mode: "insensitive" } },
+            ]
+          : [{ city: { equals: user.profile.city, mode: "insensitive" } }],
+      }],
+      OR: [
+        { relationshipIntents: { hasSome: compatibleIntents(user.profile) } },
+        { AND: [{ relationshipIntents: { isEmpty: true } }, { relationshipIntent: { in: compatibleIntents(user.profile) } }] },
+      ],
+      user: { role: "MEMBER", emailVerifiedAt: { not: null } },
     },
     include: {
       user: { select: { id: true, dateOfBirth: true } },
@@ -48,15 +61,8 @@ export async function GET(request: NextRequest) {
   const withPhotos = await Promise.all(
     profiles.map(async (profile) => ({
       userId: profile.userId,
-      displayName: profile.displayName,
+      ...visibleProfile(profile),
       age: ageOnDate(profile.user.dateOfBirth),
-      city: profile.city,
-      relationshipIntent: profile.relationshipIntent,
-      bio: profile.bio,
-      identityText: profile.identityText,
-      culturalBackground: profile.culturalBackground,
-      traditionPrompt: profile.traditionPrompt,
-      futurePrompt: profile.futurePrompt,
       photos: (await prisma.photo.findMany({
         where: { userId: profile.userId },
         orderBy: { position: "asc" },
@@ -71,6 +77,7 @@ export async function POST(request: NextRequest) {
   if (originError) return originError;
   const user = await getRequestUser(request);
   if (!user) return jsonError("Sign in to send an introduction.", 401);
+  if (!user.profile?.published || user.profile.discoveryPaused) return jsonError("Publish and enable discovery before sending an introduction.", 403);
   let body: Record<string, unknown>;
   try {
     body = await request.json();
@@ -78,9 +85,7 @@ export async function POST(request: NextRequest) {
     return jsonError("Request body must be valid JSON.", 400);
   }
   const toUserId = typeof body.toUserId === "string" ? body.toUserId : "";
-  const promptKey = body.promptKey === "traditionPrompt" || body.promptKey === "futurePrompt"
-    ? body.promptKey
-    : "";
+  const promptKey = isPromptKey(body.promptKey) ? body.promptKey : "";
   const message = typeof body.message === "string" ? body.message.trim() : "";
   if (!toUserId || !promptKey || message.length < 8 || message.length > 500) {
     return jsonError("Choose a profile prompt and write an introduction of 8 to 500 characters.");
@@ -89,9 +94,12 @@ export async function POST(request: NextRequest) {
   if (await blockedEitherWay(user.id, toUserId)) return jsonError("This profile is no longer available.", 404);
   const target = await prisma.user.findUnique({
     where: { id: toUserId },
-    select: { id: true, role: true, profile: { select: { userId: true } } },
+    select: { id: true, role: true, emailVerifiedAt: true, profile: true },
   });
-  if (!target || target.role !== "MEMBER" || !target.profile) return jsonError("Profile not found.", 404);
+  if (!target?.profile || target.role !== "MEMBER" || !target.emailVerifiedAt || !canDiscover(user.profile, target.profile)) {
+    return jsonError("Profile not found.", 404);
+  }
+  if (!target.profile[promptKey]) return jsonError("Choose a prompt the member has answered.");
   const existingMatch = await prisma.match.findFirst({
     where: {
       OR: [

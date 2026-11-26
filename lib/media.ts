@@ -1,4 +1,4 @@
-export function protectedPhoto<T extends { id: string; url: string }>(photo: T) {
+export function protectedPhoto<T extends { id: string }>(photo: T) {
   return { ...photo, url: `/api/media/${encodeURIComponent(photo.id)}` };
 }
 

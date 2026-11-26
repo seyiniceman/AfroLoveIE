@@ -485,10 +485,6 @@ export type EnumIntroductionStatusFieldUpdateOperationsInput = {
   set?: $Enums.IntroductionStatus
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type IntroductionCreateNestedOneWithoutMatchInput = {
   create?: Prisma.XOR<Prisma.IntroductionCreateWithoutMatchInput, Prisma.IntroductionUncheckedCreateWithoutMatchInput>
   connectOrCreate?: Prisma.IntroductionCreateOrConnectWithoutMatchInput

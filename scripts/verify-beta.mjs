@@ -33,15 +33,46 @@ async function expectStatus(actor, path, status, options) {
   return result;
 }
 
-async function signUp(label, city = "Dublin") {
+async function getMailToken(email, action, expectedUsername) {
+  const mailpit = new URL(process.env.TEST_MAILPIT_URL ?? "http://localhost:8025");
+  const search = new URL("/api/v1/search", mailpit);
+  search.searchParams.set("query", `to:${email}`);
+  const subject = action === "verify" ? "Verify your AfroIE Meet email" : "Reset your AfroIE Meet password";
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const response = await fetch(search);
+    assert.ok(response.ok, "Mailpit search should succeed");
+    const { messages = [] } = await response.json();
+    const match = messages.find((message) => message.Subject === subject);
+    if (match) {
+      const detail = await fetch(new URL(`/api/v1/message/${encodeURIComponent(match.ID)}`, mailpit));
+      assert.ok(detail.ok, "The captured email should be available");
+      const { Text } = await detail.json();
+      if (expectedUsername) assert.ok(Text.includes(expectedUsername), "Recovery email should include the sign-in username");
+      const link = Text.match(/https?:\/\/[^\s]+\/account-email#[^\s]+/)?.[0];
+      assert.ok(link, "Email should contain an account action link");
+      const params = new URLSearchParams(new URL(link).hash.slice(1));
+      assert.equal(params.get("action"), action);
+      const token = params.get("token");
+      assert.match(token, /^[A-Za-z0-9_-]{43}$/);
+      return token;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  throw new Error("Expected account email was not captured by Mailpit.");
+}
+
+
+async function signUp(label, city = "Dublin", publish = true) {
   const account = {
     cookie: "",
     email: `${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${synthetic}@example.test`,
+    username: `${label.toLowerCase().replace(/[^a-z0-9]+/g, "_").slice(0, 17)}_${synthetic.slice(0, 12)}`,
   };
   const result = await expectStatus(account, "/api/auth", 201, {
     method: "POST",
     body: {
       action: "signup",
+      username: account.username,
       email: account.email,
       password: credentials,
       displayName: label,
@@ -51,6 +82,21 @@ async function signUp(label, city = "Dublin") {
   });
   account.cookie = result.response.headers.get("set-cookie")?.split(";")[0] ?? "";
   assert.ok(account.cookie, "signup must set the session cookie");
+  accounts.push(account);
+  await expectStatus(account, "/api/profile", 401);
+  const token = await getMailToken(account.email, "verify");
+  await expectStatus(null, "/api/account-email", 403, {
+    method: "POST", body: { action: "verify", token },
+  });
+  await expectStatus(account, "/api/account-email", 200, {
+    method: "POST", body: { action: "verify", token },
+  });
+  await expectStatus(account, "/api/account-email", 400, {
+    method: "POST", body: { action: "verify", token },
+  });
+  assert.equal((await expectStatus(account, "/api/profile", 200)).data.profile.published, false);
+  assert.deepEqual((await expectStatus(account, "/api/discovery", 200)).data.profiles, []);
+  if (!publish) return account;
   await expectStatus(account, "/api/profile", 200, {
     method: "PUT",
     body: {
@@ -68,13 +114,13 @@ async function signUp(label, city = "Dublin") {
   return account;
 }
 
-async function acceptIntroduction(sender, recipient, targetId) {
+async function acceptIntroduction(sender, recipient, targetId, promptKey = "traditionPrompt") {
   const sent = await expectStatus(sender, "/api/discovery", 201, {
     method: "POST",
     body: {
       toUserId: targetId,
-      promptKey: "traditionPrompt",
-      message: "I would love to hear more about that tradition.",
+      promptKey,
+      message: "I would love to hear more about that."
     },
   });
   const introId = sent.data.introduction.id;
@@ -107,13 +153,9 @@ assert.equal(
 const accounts = [];
 try {
   const amara = await signUp("Synthetic Amara");
-  accounts.push(amara);
-  const daniel = await signUp("Synthetic Daniel");
-  accounts.push(daniel);
+  const daniel = await signUp("Synthetic Daniel", "Dublin", false);
   const outsider = await signUp("Synthetic Outsider", "Cork");
-  accounts.push(outsider);
   const unmatchPartner = await signUp("Synthetic Unmatch");
-  accounts.push(unmatchPartner);
 
   const amaraProfile = (await expectStatus(amara, "/api/profile", 200)).data.profile;
   await expectStatus(amara, "/api/profile", 200, {
@@ -132,6 +174,48 @@ try {
     body: { toUserId: "untrusted", promptKey: "traditionPrompt", message: "A valid-sized note." },
   });
 
+  await expectStatus(null, "/api/auth", 409, {
+    method: "POST",
+    body: {
+      action: "signup", username: daniel.username.toUpperCase(), email: `duplicate-${synthetic}@example.test`,
+      password: credentials, displayName: "Duplicate fixture", dateOfBirth: "1992-05-15", ageConfirmed: true,
+    },
+  });
+  const privateDraft = (await expectStatus(daniel, "/api/profile", 200)).data.profile;
+  assert.equal(privateDraft.published, false);
+  const draft = await expectStatus(daniel, "/api/profile", 200, {
+    method: "PUT",
+    body: {
+      ...privateDraft,
+      bio: "I’m usually out for live music or a walk along the canal.",
+      sex: "Private fixture",
+      gender: "Man",
+      showGender: true,
+      ethnicity: "Hidden fixture",
+      showEthnicity: false,
+      occupation: "Teacher",
+      interests: ["Cooking", "Live music"],
+      languages: ["English", "Yoruba"],
+      traditionPrompt: "I like hosting friends and family for Sunday lunch.",
+      saturdayPrompt: "A canal walk, a bookshop, and a live gig.",
+      lookingFor: "Someone who enjoys exploring Dublin together.",
+      relationshipIntent: "LONG_TERM",
+      relationshipIntents: ["LONG_TERM", "FRIENDSHIP"],
+      saveMode: "draft",
+      onboardingStep: 4,
+      photos: [],
+    },
+  });
+  assert.equal(draft.data.profile.published, false);
+  const resumed = (await expectStatus(daniel, "/api/profile", 200)).data.profile;
+  assert.equal(resumed.onboardingStep, 4);
+  assert.equal(resumed.occupation, "Teacher");
+  assert.ok(!(await expectStatus(amara, "/api/discovery", 200)).data.profiles.some((profile) => profile.displayName === "Synthetic Daniel"));
+  await expectStatus(daniel, "/api/profile", 200, {
+    method: "PUT",
+    body: { ...resumed, saveMode: "publish", photos: [] },
+  });
+
   const danielProfile = (await expectStatus(daniel, "/api/profile", 200)).data.profile;
   await expectStatus(daniel, "/api/profile", 400, {
     method: "PUT",
@@ -144,28 +228,51 @@ try {
     method: "PUT",
     body: {
       ...danielProfile,
-      photos: [{ url: png, altText: "A tiny test image" }],
+      photos: [{ url: png, altText: "Cover test image" }, { url: png, altText: "Second test image" }],
     },
   });
   const discovery = (await expectStatus(amara, "/api/discovery", 200)).data.profiles;
   const discoveredDaniel = discovery.find((profile) => profile.displayName === "Synthetic Daniel");
-  assert.ok(discoveredDaniel, "same-city profile should be discoverable");
+  assert.ok(discoveredDaniel, "same-city profile with overlapping intentions should be discoverable");
+  assert.equal("sex" in discoveredDaniel, false);
+  assert.equal("username" in discoveredDaniel, false);
+  assert.equal(discoveredDaniel.ethnicity, null);
+  assert.equal(discoveredDaniel.gender, "Man");
+  assert.deepEqual(discoveredDaniel.relationshipIntents, ["LONG_TERM", "FRIENDSHIP"]);
+  assert.ok(discoveredDaniel.saturdayPrompt);
+  assert.deepEqual(discoveredDaniel.photos.map((photo) => photo.altText), ["Cover test image", "Second test image"]);
+  const danielViewer = (await expectStatus(daniel, "/api/auth", 200)).data.user;
+  assert.equal(danielViewer.mainPhoto.url, discoveredDaniel.photos[0].url);
   const photoUrl = discoveredDaniel.photos[0].url;
   assert.match(photoUrl, /^\/api\/media\//);
   assert.equal((await request(amara, photoUrl)).response.status, 200);
   assert.equal((await request(outsider, photoUrl)).response.status, 404);
 
-  const firstMatch = await acceptIntroduction(amara, daniel, discoveredDaniel.userId);
+  await expectStatus(daniel, "/api/profile", 200, { method: "PATCH", body: { discoveryPaused: true } });
+  assert.ok(!(await expectStatus(amara, "/api/discovery", 200)).data.profiles.some((profile) => profile.userId === discoveredDaniel.userId));
+  assert.equal((await request(amara, photoUrl)).response.status, 404);
+  await expectStatus(daniel, "/api/profile", 200, { method: "PATCH", body: { discoveryPaused: false } });
+
+  const firstMatch = await acceptIntroduction(amara, daniel, discoveredDaniel.userId, "saturdayPrompt");
   const matches = (await expectStatus(amara, "/api/matches", 200)).data.matches;
   assert.equal(matches.filter((match) => match.id === firstMatch.id).length, 1);
   assert.equal((await expectStatus(daniel, "/api/matches", 200)).data.matches.length, 1);
 
-  await expectStatus(amara, `/api/matches/${firstMatch.id}`, 201, {
+  const sentMessage = await expectStatus(amara, `/api/matches/${firstMatch.id}`, 201, {
     method: "POST",
     body: { body: "A synthetic hello from the local test." },
   });
+  const amaraUserId = (await expectStatus(amara, "/api/auth", 200)).data.user.id;
+  assert.equal(sentMessage.data.message.sender.id, amaraUserId);
+  assert.equal((await expectStatus(daniel, "/api/notifications", 200)).data.unreadMessages, 1);
+  assert.equal((await expectStatus(amara, "/api/notifications", 200)).data.unreadMessages, 0);
   const conversation = await expectStatus(daniel, `/api/matches/${firstMatch.id}`, 200);
   assert.equal(conversation.data.messages.length, 1);
+  assert.equal(conversation.data.messages[0].unread, true);
+  const readRequest = { method: "PATCH", body: { action: "mark-read", messageIds: [sentMessage.data.message.id] } };
+  await expectStatus(outsider, `/api/matches/${firstMatch.id}`, 404, readRequest);
+  await expectStatus(daniel, `/api/matches/${firstMatch.id}`, 200, readRequest);
+  assert.equal((await expectStatus(daniel, "/api/notifications", 200)).data.unreadMessages, 0);
   await expectStatus(outsider, `/api/matches/${firstMatch.id}`, 404, {
     method: "POST",
     body: { body: "This account is not a participant." },
@@ -175,6 +282,19 @@ try {
     method: "POST",
     body: { action: "report", subjectId: discoveredDaniel.userId, reason: "OTHER", details: "Synthetic report." },
   });
+  const photoRequest = {
+    method: "POST",
+    body: { action: "report", subjectId: discoveredDaniel.userId, reason: "OTHER", details: "Synthetic photo report.", evidenceKind: "PHOTO", evidenceRef: photoUrl.split("/").at(-1) },
+  };
+  await expectStatus(outsider, "/api/safety", 404, photoRequest);
+  const photoReport = await expectStatus(amara, "/api/safety", 201, photoRequest);
+  await expectStatus(amara, "/api/safety", 409, photoRequest);
+  const messageRequest = {
+    method: "POST",
+    body: { action: "report", subjectId: amaraUserId, reason: "OTHER", details: "Synthetic message report.", evidenceKind: "MESSAGE", evidenceRef: sentMessage.data.message.id },
+  };
+  await expectStatus(outsider, "/api/safety", 404, messageRequest);
+  const messageReport = await expectStatus(daniel, "/api/safety", 201, messageRequest);
   const moderator = {};
   const modLogin = await expectStatus(moderator, "/api/auth", 200, {
     method: "POST",
@@ -185,6 +305,31 @@ try {
   assert.equal(memberQueue.response.status, 403);
   const queue = await expectStatus(moderator, "/api/moderation", 200);
   assert.ok(queue.data.reports.some((item) => item.id === report.data.report.id));
+  const photoEvidenceUrl = queue.data.reports.find((item) => item.id === photoReport.data.report.id)?.photoEvidenceUrl;
+  assert.match(photoEvidenceUrl, /^\/api\/moderation\//);
+  await expectStatus(outsider, photoEvidenceUrl, 403);
+  const evidence = await expectStatus(moderator, photoEvidenceUrl, 200);
+  assert.match(evidence.response.headers.get("content-type"), /^image\//);
+  assert.equal(queue.data.reports.find((item) => item.id === messageReport.data.report.id)?.messageEvidence, "A synthetic hello from the local test.");
+  const memberUpdate = await request(outsider, "/api/moderation", {
+    method: "PATCH",
+    body: { id: report.data.report.id, status: "REVIEWING" },
+  });
+  assert.equal(memberUpdate.response.status, 403);
+  const reviewedReport = await expectStatus(moderator, "/api/moderation", 200, {
+    method: "PATCH",
+    body: { id: report.data.report.id, status: "REVIEWING" },
+  });
+  assert.equal(reviewedReport.data.report.status, "REVIEWING");
+  const resolution = { id: report.data.report.id, status: "RESOLVED", outcome: "NO_VIOLATION" };
+  await expectStatus(moderator, "/api/moderation", 400, { method: "PATCH", body: resolution });
+  await expectStatus(moderator, "/api/moderation", 200, {
+    method: "PATCH", body: { ...resolution, note: "Synthetic evidence reviewed." },
+  });
+  const resolved = await expectStatus(moderator, "/api/moderation?status=RESOLVED", 200);
+  const resolvedItem = resolved.data.reports.find((item) => item.id === report.data.report.id);
+  assert.equal(resolvedItem.outcome, "NO_VIOLATION");
+  assert.ok(resolvedItem.reviews.some((entry) => entry.note === "Synthetic evidence reviewed."));
 
   const secondMatch = await acceptIntroduction(amara, unmatchPartner, (
     await expectStatus(amara, "/api/discovery", 200)
@@ -220,6 +365,27 @@ try {
   });
   assert.equal((await request(outsider, "/api/profile")).response.status, 401);
 
+  await expectStatus(null, "/api/account-email", 200, {
+    method: "POST", body: { action: "request-reset", email: daniel.email },
+  });
+  const resetToken = await getMailToken(daniel.email, "reset", daniel.username);
+  const resetPassword = `LocalReset!${randomUUID()}Aa9`;
+  await expectStatus(null, "/api/account-email", 200, {
+    method: "POST", body: { action: "reset", token: resetToken, password: resetPassword },
+  });
+  daniel.password = resetPassword;
+  await expectStatus(null, "/api/account-email", 400, {
+    method: "POST", body: { action: "reset", token: resetToken, password: resetPassword },
+  });
+  await expectStatus(daniel, "/api/profile", 401);
+  await expectStatus(null, "/api/auth", 401, {
+    method: "POST", body: { action: "login", email: daniel.email, password: resetPassword },
+  });
+  const resetLogin = await expectStatus(null, "/api/auth", 200, {
+    method: "POST", body: { action: "login", username: daniel.username.toUpperCase(), password: resetPassword },
+  });
+  daniel.cookie = resetLogin.response.headers.get("set-cookie")?.split(";")[0] ?? "";
+
   await expectStatus(amara, "/api/auth", 200, {
     method: "POST",
     body: { action: "logout" },
@@ -231,18 +397,18 @@ try {
     if (!account.cookie) continue;
     let result = await request(account, "/api/account", {
       method: "DELETE",
-      body: { password: credentials },
+      body: { password: account.password ?? credentials },
     });
     if (result.response.status === 401) {
       const login = await request(null, "/api/auth", {
         method: "POST",
-        body: { action: "login", email: account.email, password: credentials },
+        body: { action: "login", username: account.username, password: account.password ?? credentials },
       });
       if (login.response.status === 200) {
         account.cookie = login.response.headers.get("set-cookie")?.split(";")[0] ?? "";
         result = await request(account, "/api/account", {
           method: "DELETE",
-          body: { password: credentials },
+          body: { password: account.password ?? credentials },
         });
       }
     }

@@ -60,7 +60,10 @@ export const ModelName = {
   Message: 'Message',
   Block: 'Block',
   Report: 'Report',
-  Invitation: 'Invitation'
+  ReportReview: 'ReportReview',
+  Invitation: 'Invitation',
+  AccountEmailToken: 'AccountEmailToken',
+  CommunityEvent: 'CommunityEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -82,6 +85,8 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
+  username: 'username',
+  emailVerifiedAt: 'emailVerifiedAt',
   passwordHash: 'passwordHash',
   role: 'role',
   dateOfBirth: 'dateOfBirth',
@@ -96,9 +101,25 @@ export const ProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   displayName: 'displayName',
+  published: 'published',
   bio: 'bio',
   city: 'city',
+  county: 'county',
   relationshipIntent: 'relationshipIntent',
+  relationshipIntents: 'relationshipIntents',
+  sex: 'sex',
+  gender: 'gender',
+  showGender: 'showGender',
+  ethnicity: 'ethnicity',
+  showEthnicity: 'showEthnicity',
+  occupation: 'occupation',
+  interests: 'interests',
+  languages: 'languages',
+  lookingFor: 'lookingFor',
+  saturdayPrompt: 'saturdayPrompt',
+  meetupPrompt: 'meetupPrompt',
+  onboardingStep: 'onboardingStep',
+  discoveryPaused: 'discoveryPaused',
   identityText: 'identityText',
   culturalBackground: 'culturalBackground',
   traditionPrompt: 'traditionPrompt',
@@ -162,6 +183,7 @@ export const MessageScalarFieldEnum = {
   conversationId: 'conversationId',
   senderId: 'senderId',
   body: 'body',
+  readAt: 'readAt',
   createdAt: 'createdAt'
 } as const
 
@@ -185,12 +207,29 @@ export const ReportScalarFieldEnum = {
   reason: 'reason',
   details: 'details',
   status: 'status',
+  evidenceKind: 'evidenceKind',
+  evidenceRef: 'evidenceRef',
+  evidenceData: 'evidenceData',
+  outcome: 'outcome',
   moderatorId: 'moderatorId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ReportScalarFieldEnum = (typeof ReportScalarFieldEnum)[keyof typeof ReportScalarFieldEnum]
+
+
+export const ReportReviewScalarFieldEnum = {
+  id: 'id',
+  reportId: 'reportId',
+  moderatorId: 'moderatorId',
+  status: 'status',
+  outcome: 'outcome',
+  note: 'note',
+  createdAt: 'createdAt'
+} as const
+
+export type ReportReviewScalarFieldEnum = (typeof ReportReviewScalarFieldEnum)[keyof typeof ReportReviewScalarFieldEnum]
 
 
 export const InvitationScalarFieldEnum = {
@@ -203,6 +242,31 @@ export const InvitationScalarFieldEnum = {
 } as const
 
 export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
+
+
+export const AccountEmailTokenScalarFieldEnum = {
+  userId: 'userId',
+  purpose: 'purpose',
+  tokenHash: 'tokenHash',
+  createdAt: 'createdAt',
+  expiresAt: 'expiresAt'
+} as const
+
+export type AccountEmailTokenScalarFieldEnum = (typeof AccountEmailTokenScalarFieldEnum)[keyof typeof AccountEmailTokenScalarFieldEnum]
+
+
+export const CommunityEventScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  category: 'category',
+  county: 'county',
+  venue: 'venue',
+  startsAt: 'startsAt',
+  url: 'url',
+  createdAt: 'createdAt'
+} as const
+
+export type CommunityEventScalarFieldEnum = (typeof CommunityEventScalarFieldEnum)[keyof typeof CommunityEventScalarFieldEnum]
 
 
 export const SortOrder = {

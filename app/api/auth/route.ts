@@ -4,7 +4,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSession, clearSession, getRequestUser, jsonError, sameOriginMutationError } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ageOnDate } from "@/lib/validation";
+import { protectedPhoto } from "@/lib/media";
+import { emailDeliveryAvailable, sendAccountEmail } from "@/lib/account-email";
 import { getRuntimeConfig } from "../../../scripts/runtime-config.mjs";
+
+function normalizedUsername(value: unknown) {
+  const username = typeof value === "string" ? value.trim() : "";
+  return /^[A-Za-z0-9][A-Za-z0-9_]{2,29}$/.test(username) ? username.toLowerCase() : null;
+}
 
 const demoAccounts = new Set([
   "amara@example.test",
@@ -16,9 +23,14 @@ const demoAccounts = new Set([
 
 export async function GET(request: NextRequest) {
   const config = getRuntimeConfig();
-  const user = await getRequestUser(request);
+  const user = await getRequestUser(request, { allowUnverified: true });
+  const cover = user?.role === "MEMBER" ? await prisma.photo.findFirst({
+    where: { userId: user.id },
+    orderBy: { position: "asc" },
+    select: { id: true, altText: true, position: true },
+  }) : null;
   return NextResponse.json({
-    user,
+    user: user ? { ...user, age: ageOnDate(user.dateOfBirth), mainPhoto: cover ? protectedPhoto(cover) : null } : null,
     demoAvailable: config.appEnvironment === "development" && config.demoDataEnabled,
     inviteRequired: config.inviteOnly,
   });
@@ -36,7 +48,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (body.action === "logout") {
-    const user = await getRequestUser(request);
+    const user = await getRequestUser(request, { allowUnverified: true });
     if (user) {
       await prisma.user.update({
         where: { id: user.id },
@@ -62,12 +74,13 @@ export async function POST(request: NextRequest) {
   }
 
   if (body.action === "login") {
-    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+    const username = normalizedUsername(body.username);
     const password = typeof body.password === "string" ? body.password : "";
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (Buffer.byteLength(password, "utf8") > 72 ||
-        !user || !(await bcrypt.compare(password, user.passwordHash))) {
-      return jsonError("Email or password is incorrect.", 401);
+    const user = username && Buffer.byteLength(password, "utf8") <= 72
+      ? await prisma.user.findUnique({ where: { username } })
+      : null;
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return jsonError("Username or password is incorrect.", 401);
     }
     const response = NextResponse.json({ ok: true });
     await createSession(response, user.id, user.sessionVersion);
@@ -75,6 +88,11 @@ export async function POST(request: NextRequest) {
   }
 
   if (body.action === "signup") {
+    if (!emailDeliveryAvailable()) return jsonError("Registration email delivery is unavailable.", 503);
+    const username = normalizedUsername(body.username);
+    if (!username || username.startsWith("demo_")) {
+      return jsonError("Choose a username with 3–30 letters, numbers or underscores, starting with a letter or number. The demo_ prefix is reserved.");
+    }
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body.password === "string" ? body.password : "";
     const displayName = typeof body.displayName === "string" ? body.displayName.trim() : "";
@@ -114,6 +132,7 @@ export async function POST(request: NextRequest) {
         const created = await tx.user.create({
           data: {
             email,
+            username,
             passwordHash,
             dateOfBirth,
             profile: { create: { displayName, city: "Dublin" } },
@@ -133,6 +152,7 @@ export async function POST(request: NextRequest) {
         }
         return created;
       });
+      await sendAccountEmail({ id: user.id, email, username }, "VERIFY");
       const response = NextResponse.json({ ok: true }, { status: 201 });
       await createSession(response, user.id, user.sessionVersion);
       return response;
@@ -146,7 +166,7 @@ export async function POST(request: NextRequest) {
         "code" in error &&
         error.code === "P2002"
       ) {
-        return jsonError("An account with this email already exists.", 409);
+        return jsonError("That username or email is already in use.", 409);
       }
       throw error;
     }

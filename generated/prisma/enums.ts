@@ -19,7 +19,10 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const RelationshipIntent = {
   MARRIAGE: 'MARRIAGE',
-  LONG_TERM: 'LONG_TERM'
+  LONG_TERM: 'LONG_TERM',
+  CASUAL: 'CASUAL',
+  FRIENDSHIP: 'FRIENDSHIP',
+  NETWORKING: 'NETWORKING'
 } as const
 
 export type RelationshipIntent = (typeof RelationshipIntent)[keyof typeof RelationshipIntent]

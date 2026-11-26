@@ -48,6 +48,8 @@ async function userFromToken(token: string | undefined) {
       select: {
         id: true,
         email: true,
+        username: true,
+        emailVerifiedAt: true,
         role: true,
         dateOfBirth: true,
         sessionVersion: true,
@@ -64,13 +66,15 @@ async function userFromToken(token: string | undefined) {
   }
 }
 
-export async function getRequestUser(request: NextRequest) {
-  return userFromToken(request.cookies.get(COOKIE_NAME)?.value);
+export async function getRequestUser(request: NextRequest, options: { allowUnverified?: boolean } = {}) {
+  const user = await userFromToken(request.cookies.get(COOKIE_NAME)?.value);
+  return user?.emailVerifiedAt || options.allowUnverified ? user : null;
 }
 
 export async function getPageUser() {
   const cookieStore = await cookies();
-  return userFromToken(cookieStore.get(COOKIE_NAME)?.value);
+  const user = await userFromToken(cookieStore.get(COOKIE_NAME)?.value);
+  return user?.emailVerifiedAt ? user : null;
 }
 
 export function jsonError(message: string, status = 400) {

@@ -1,0 +1,17 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" source(none);
+@source "./page.tsx";
+
+body:has(.afroie-home) { background: #FDF8F4; }
+.afroie-home { font-family: "Inter Variable", system-ui, sans-serif; }
+.home-display { font-family: "Playfair Display Variable", Georgia, serif; }
+.afroie-home a:focus-visible { outline: 3px solid #9d7334; outline-offset: 4px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-enter { animation: home-fade-in 300ms ease both; }
+}
+
+@keyframes home-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

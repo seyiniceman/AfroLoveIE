@@ -87,7 +87,22 @@ export type Block = Prisma.BlockModel
  */
 export type Report = Prisma.ReportModel
 /**
+ * Model ReportReview
+ * 
+ */
+export type ReportReview = Prisma.ReportReviewModel
+/**
  * Model Invitation
  * 
  */
 export type Invitation = Prisma.InvitationModel
+/**
+ * Model AccountEmailToken
+ * 
+ */
+export type AccountEmailToken = Prisma.AccountEmailTokenModel
+/**
+ * Model CommunityEvent
+ * 
+ */
+export type CommunityEvent = Prisma.CommunityEventModel

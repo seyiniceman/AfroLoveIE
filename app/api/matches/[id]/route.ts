@@ -31,7 +31,12 @@ export async function GET(request: NextRequest, context: RouteContext) {
     include: { sender: { select: { id: true } } },
     orderBy: { createdAt: "asc" },
   });
-  return NextResponse.json({ messages });
+  return NextResponse.json({
+    messages: messages.map(({ readAt, ...message }) => ({
+      ...message,
+      unread: message.senderId !== user.id && readAt === null,
+    })),
+  });
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
@@ -71,6 +76,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     if (!match.conversation) return { error: "Conversation not found.", status: 404 as const };
     const message = await tx.message.create({
       data: { conversationId: match.conversation.id, senderId: user.id, body: messageBody },
+      include: { sender: { select: { id: true } } },
     });
     return { message };
   }, { isolationLevel: "Serializable" });
@@ -91,7 +97,21 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   } catch {
     return jsonError("Request body must be valid JSON.", 400);
   }
-  if (body.action !== "unmatch") return jsonError("Choose unmatch.");
+  if (body.action === "mark-read") {
+    const ids = body.messageIds;
+    if (!Array.isArray(ids) || !ids.length || ids.length > 200 ||
+        !ids.every((value) => typeof value === "string" && value.length <= 64)) {
+      return jsonError("Choose up to 200 messages to mark as read.");
+    }
+    const access = await activeConversation(id, user.id);
+    if (!access.ok) return jsonError(access.error, access.status);
+    await prisma.message.updateMany({
+      where: { id: { in: ids }, conversationId: access.conversation.id, senderId: { not: user.id }, readAt: null },
+      data: { readAt: new Date() },
+    });
+    return NextResponse.json({ ok: true });
+  }
+  if (body.action !== "unmatch") return jsonError("Choose a supported match action.");
   const match = await prisma.match.findUnique({ where: { id } });
   if (!match || (match.firstUserId !== user.id && match.secondUserId !== user.id)) {
     return jsonError("Match not found.", 404);

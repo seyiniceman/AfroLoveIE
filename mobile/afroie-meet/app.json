@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "AfroIE Meet",
+    "slug": "afroie-meet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF7ED"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ie.afroie.meet"
+    },
+    "android": {
+      "package": "ie.afroie.meet",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#2B1A12"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "afroie-meet",
+    "plugins": [
+      "expo-router",
+      "expo-image-picker",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#C98A2E"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow AfroIE Meet to capture your verification selfie.",
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow AfroIE Meet to record your optional voice introduction."
+        }
+      ]
+    ]
+  }
+}

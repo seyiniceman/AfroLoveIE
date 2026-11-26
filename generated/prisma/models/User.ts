@@ -37,6 +37,8 @@ export type UserSumAggregateOutputType = {
 export type UserMinAggregateOutputType = {
   id: string | null
   email: string | null
+  username: string | null
+  emailVerifiedAt: Date | null
   passwordHash: string | null
   role: $Enums.Role | null
   dateOfBirth: Date | null
@@ -47,6 +49,8 @@ export type UserMinAggregateOutputType = {
 export type UserMaxAggregateOutputType = {
   id: string | null
   email: string | null
+  username: string | null
+  emailVerifiedAt: Date | null
   passwordHash: string | null
   role: $Enums.Role | null
   dateOfBirth: Date | null
@@ -57,6 +61,8 @@ export type UserMaxAggregateOutputType = {
 export type UserCountAggregateOutputType = {
   id: number
   email: number
+  username: number
+  emailVerifiedAt: number
   passwordHash: number
   role: number
   dateOfBirth: number
@@ -77,6 +83,8 @@ export type UserSumAggregateInputType = {
 export type UserMinAggregateInputType = {
   id?: true
   email?: true
+  username?: true
+  emailVerifiedAt?: true
   passwordHash?: true
   role?: true
   dateOfBirth?: true
@@ -87,6 +95,8 @@ export type UserMinAggregateInputType = {
 export type UserMaxAggregateInputType = {
   id?: true
   email?: true
+  username?: true
+  emailVerifiedAt?: true
   passwordHash?: true
   role?: true
   dateOfBirth?: true
@@ -97,6 +107,8 @@ export type UserMaxAggregateInputType = {
 export type UserCountAggregateInputType = {
   id?: true
   email?: true
+  username?: true
+  emailVerifiedAt?: true
   passwordHash?: true
   role?: true
   dateOfBirth?: true
@@ -194,6 +206,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type UserGroupByOutputType = {
   id: string
   email: string
+  username: string
+  emailVerifiedAt: Date | null
   passwordHash: string
   role: $Enums.Role
   dateOfBirth: Date
@@ -227,11 +241,14 @@ export type UserWhereInput = {
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
+  username?: Prisma.StringFilter<"User"> | string
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordHash?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFilter<"User"> | Date | string
   sessionVersion?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenListRelationFilter
   profile?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
   photos?: Prisma.PhotoListRelationFilter
   introductionsSent?: Prisma.IntroductionListRelationFilter
@@ -244,17 +261,21 @@ export type UserWhereInput = {
   reportsFiled?: Prisma.ReportListRelationFilter
   reportsAbout?: Prisma.ReportListRelationFilter
   reportsModerated?: Prisma.ReportListRelationFilter
+  reportReviews?: Prisma.ReportReviewListRelationFilter
   invitationUsed?: Prisma.XOR<Prisma.InvitationNullableScalarRelationFilter, Prisma.InvitationWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   sessionVersion?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  accountEmailTokens?: Prisma.AccountEmailTokenOrderByRelationAggregateInput
   profile?: Prisma.ProfileOrderByWithRelationInput
   photos?: Prisma.PhotoOrderByRelationAggregateInput
   introductionsSent?: Prisma.IntroductionOrderByRelationAggregateInput
@@ -267,20 +288,24 @@ export type UserOrderByWithRelationInput = {
   reportsFiled?: Prisma.ReportOrderByRelationAggregateInput
   reportsAbout?: Prisma.ReportOrderByRelationAggregateInput
   reportsModerated?: Prisma.ReportOrderByRelationAggregateInput
+  reportReviews?: Prisma.ReportReviewOrderByRelationAggregateInput
   invitationUsed?: Prisma.InvitationOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
+  username?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
+  emailVerifiedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   passwordHash?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFilter<"User"> | Date | string
   sessionVersion?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenListRelationFilter
   profile?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
   photos?: Prisma.PhotoListRelationFilter
   introductionsSent?: Prisma.IntroductionListRelationFilter
@@ -293,12 +318,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   reportsFiled?: Prisma.ReportListRelationFilter
   reportsAbout?: Prisma.ReportListRelationFilter
   reportsModerated?: Prisma.ReportListRelationFilter
+  reportReviews?: Prisma.ReportReviewListRelationFilter
   invitationUsed?: Prisma.XOR<Prisma.InvitationNullableScalarRelationFilter, Prisma.InvitationWhereInput> | null
-}, "id" | "email">
+}, "id" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
@@ -317,6 +345,8 @@ export type UserScalarWhereWithAggregatesInput = {
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
+  username?: Prisma.StringWithAggregatesFilter<"User"> | string
+  emailVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   dateOfBirth?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -327,11 +357,14 @@ export type UserScalarWhereWithAggregatesInput = {
 export type UserCreateInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -344,17 +377,21 @@ export type UserCreateInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -367,17 +404,21 @@ export type UserUncheckedCreateInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -390,17 +431,21 @@ export type UserUpdateInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -413,12 +458,15 @@ export type UserUncheckedUpdateInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
@@ -429,6 +477,8 @@ export type UserCreateManyInput = {
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -439,6 +489,8 @@ export type UserUpdateManyMutationInput = {
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -449,6 +501,8 @@ export type UserUncheckedUpdateManyInput = {
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
@@ -463,6 +517,8 @@ export type UserAvgOrderByAggregateInput = {
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
@@ -473,6 +529,8 @@ export type UserMaxOrderByAggregateInput = {
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  username?: Prisma.SortOrder
+  emailVerifiedAt?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   role?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
@@ -496,6 +554,10 @@ export type UserNullableScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type EnumRoleFieldUpdateOperationsInput = {
@@ -684,6 +746,22 @@ export type UserUpdateOneWithoutReportsModeratedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReportsModeratedInput, Prisma.UserUpdateWithoutReportsModeratedInput>, Prisma.UserUncheckedUpdateWithoutReportsModeratedInput>
 }
 
+export type UserCreateNestedOneWithoutReportReviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReportReviewsInput, Prisma.UserUncheckedCreateWithoutReportReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutReportReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReportReviewsInput, Prisma.UserUncheckedCreateWithoutReportReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReportReviewsInput
+  upsert?: Prisma.UserUpsertWithoutReportReviewsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReportReviewsInput, Prisma.UserUpdateWithoutReportReviewsInput>, Prisma.UserUncheckedUpdateWithoutReportReviewsInput>
+}
+
 export type UserCreateNestedOneWithoutInvitationUsedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutInvitationUsedInput, Prisma.UserUncheckedCreateWithoutInvitationUsedInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutInvitationUsedInput
@@ -700,14 +778,31 @@ export type UserUpdateOneWithoutInvitationUsedNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInvitationUsedInput, Prisma.UserUpdateWithoutInvitationUsedInput>, Prisma.UserUncheckedUpdateWithoutInvitationUsedInput>
 }
 
+export type UserCreateNestedOneWithoutAccountEmailTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccountEmailTokensInput, Prisma.UserUncheckedCreateWithoutAccountEmailTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountEmailTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAccountEmailTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccountEmailTokensInput, Prisma.UserUncheckedCreateWithoutAccountEmailTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountEmailTokensInput
+  upsert?: Prisma.UserUpsertWithoutAccountEmailTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccountEmailTokensInput, Prisma.UserUpdateWithoutAccountEmailTokensInput>, Prisma.UserUncheckedUpdateWithoutAccountEmailTokensInput>
+}
+
 export type UserCreateWithoutProfileInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
   introductionsInbox?: Prisma.IntroductionCreateNestedManyWithoutToUserInput
@@ -719,17 +814,21 @@ export type UserCreateWithoutProfileInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutProfileInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
   introductionsInbox?: Prisma.IntroductionUncheckedCreateNestedManyWithoutToUserInput
@@ -741,6 +840,7 @@ export type UserUncheckedCreateWithoutProfileInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -763,11 +863,14 @@ export type UserUpdateToOneWithWhereWithoutProfileInput = {
 export type UserUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
   introductionsInbox?: Prisma.IntroductionUpdateManyWithoutToUserNestedInput
@@ -779,17 +882,21 @@ export type UserUpdateWithoutProfileInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
   introductionsInbox?: Prisma.IntroductionUncheckedUpdateManyWithoutToUserNestedInput
@@ -801,17 +908,21 @@ export type UserUncheckedUpdateWithoutProfileInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserCreateWithoutPhotosInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
   introductionsInbox?: Prisma.IntroductionCreateNestedManyWithoutToUserInput
@@ -823,17 +934,21 @@ export type UserCreateWithoutPhotosInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutPhotosInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
   introductionsInbox?: Prisma.IntroductionUncheckedCreateNestedManyWithoutToUserInput
@@ -845,6 +960,7 @@ export type UserUncheckedCreateWithoutPhotosInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -867,11 +983,14 @@ export type UserUpdateToOneWithWhereWithoutPhotosInput = {
 export type UserUpdateWithoutPhotosInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
   introductionsInbox?: Prisma.IntroductionUpdateManyWithoutToUserNestedInput
@@ -883,17 +1002,21 @@ export type UserUpdateWithoutPhotosInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPhotosInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
   introductionsInbox?: Prisma.IntroductionUncheckedUpdateManyWithoutToUserNestedInput
@@ -905,17 +1028,21 @@ export type UserUncheckedUpdateWithoutPhotosInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserCreateWithoutIntroductionsSentInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsInbox?: Prisma.IntroductionCreateNestedManyWithoutToUserInput
@@ -927,17 +1054,21 @@ export type UserCreateWithoutIntroductionsSentInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutIntroductionsSentInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsInbox?: Prisma.IntroductionUncheckedCreateNestedManyWithoutToUserInput
@@ -949,6 +1080,7 @@ export type UserUncheckedCreateWithoutIntroductionsSentInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -960,11 +1092,14 @@ export type UserCreateOrConnectWithoutIntroductionsSentInput = {
 export type UserCreateWithoutIntroductionsInboxInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -976,17 +1111,21 @@ export type UserCreateWithoutIntroductionsInboxInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutIntroductionsInboxInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -998,6 +1137,7 @@ export type UserUncheckedCreateWithoutIntroductionsInboxInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1020,11 +1160,14 @@ export type UserUpdateToOneWithWhereWithoutIntroductionsSentInput = {
 export type UserUpdateWithoutIntroductionsSentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsInbox?: Prisma.IntroductionUpdateManyWithoutToUserNestedInput
@@ -1036,17 +1179,21 @@ export type UserUpdateWithoutIntroductionsSentInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutIntroductionsSentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsInbox?: Prisma.IntroductionUncheckedUpdateManyWithoutToUserNestedInput
@@ -1058,6 +1205,7 @@ export type UserUncheckedUpdateWithoutIntroductionsSentInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
@@ -1075,11 +1223,14 @@ export type UserUpdateToOneWithWhereWithoutIntroductionsInboxInput = {
 export type UserUpdateWithoutIntroductionsInboxInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1091,17 +1242,21 @@ export type UserUpdateWithoutIntroductionsInboxInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutIntroductionsInboxInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1113,17 +1268,21 @@ export type UserUncheckedUpdateWithoutIntroductionsInboxInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserCreateWithoutMatchesAsFirstInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1135,17 +1294,21 @@ export type UserCreateWithoutMatchesAsFirstInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutMatchesAsFirstInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1157,6 +1320,7 @@ export type UserUncheckedCreateWithoutMatchesAsFirstInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1168,11 +1332,14 @@ export type UserCreateOrConnectWithoutMatchesAsFirstInput = {
 export type UserCreateWithoutMatchesAsSecondInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1184,17 +1351,21 @@ export type UserCreateWithoutMatchesAsSecondInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutMatchesAsSecondInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1206,6 +1377,7 @@ export type UserUncheckedCreateWithoutMatchesAsSecondInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1228,11 +1400,14 @@ export type UserUpdateToOneWithWhereWithoutMatchesAsFirstInput = {
 export type UserUpdateWithoutMatchesAsFirstInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1244,17 +1419,21 @@ export type UserUpdateWithoutMatchesAsFirstInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMatchesAsFirstInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1266,6 +1445,7 @@ export type UserUncheckedUpdateWithoutMatchesAsFirstInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
@@ -1283,11 +1463,14 @@ export type UserUpdateToOneWithWhereWithoutMatchesAsSecondInput = {
 export type UserUpdateWithoutMatchesAsSecondInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1299,17 +1482,21 @@ export type UserUpdateWithoutMatchesAsSecondInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMatchesAsSecondInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1321,17 +1508,21 @@ export type UserUncheckedUpdateWithoutMatchesAsSecondInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1343,17 +1534,21 @@ export type UserCreateWithoutMessagesInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1365,6 +1560,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1387,11 +1583,14 @@ export type UserUpdateToOneWithWhereWithoutMessagesInput = {
 export type UserUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1403,17 +1602,21 @@ export type UserUpdateWithoutMessagesInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1425,17 +1628,21 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserCreateWithoutBlocksMadeInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1447,17 +1654,21 @@ export type UserCreateWithoutBlocksMadeInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutBlocksMadeInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1469,6 +1680,7 @@ export type UserUncheckedCreateWithoutBlocksMadeInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1480,11 +1692,14 @@ export type UserCreateOrConnectWithoutBlocksMadeInput = {
 export type UserCreateWithoutBlocksReceivedInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1496,17 +1711,21 @@ export type UserCreateWithoutBlocksReceivedInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutBlocksReceivedInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1518,6 +1737,7 @@ export type UserUncheckedCreateWithoutBlocksReceivedInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1540,11 +1760,14 @@ export type UserUpdateToOneWithWhereWithoutBlocksMadeInput = {
 export type UserUpdateWithoutBlocksMadeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1556,17 +1779,21 @@ export type UserUpdateWithoutBlocksMadeInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBlocksMadeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1578,6 +1805,7 @@ export type UserUncheckedUpdateWithoutBlocksMadeInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
@@ -1595,11 +1823,14 @@ export type UserUpdateToOneWithWhereWithoutBlocksReceivedInput = {
 export type UserUpdateWithoutBlocksReceivedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1611,17 +1842,21 @@ export type UserUpdateWithoutBlocksReceivedInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBlocksReceivedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1633,17 +1868,21 @@ export type UserUncheckedUpdateWithoutBlocksReceivedInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserCreateWithoutReportsFiledInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1655,17 +1894,21 @@ export type UserCreateWithoutReportsFiledInput = {
   blocksReceived?: Prisma.BlockCreateNestedManyWithoutBlockedInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutReportsFiledInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1677,6 +1920,7 @@ export type UserUncheckedCreateWithoutReportsFiledInput = {
   blocksReceived?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockedInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1688,11 +1932,14 @@ export type UserCreateOrConnectWithoutReportsFiledInput = {
 export type UserCreateWithoutReportsAboutInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1704,17 +1951,21 @@ export type UserCreateWithoutReportsAboutInput = {
   blocksReceived?: Prisma.BlockCreateNestedManyWithoutBlockedInput
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutReportsAboutInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1726,6 +1977,7 @@ export type UserUncheckedCreateWithoutReportsAboutInput = {
   blocksReceived?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockedInput
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1737,11 +1989,14 @@ export type UserCreateOrConnectWithoutReportsAboutInput = {
 export type UserCreateWithoutReportsModeratedInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1753,17 +2008,21 @@ export type UserCreateWithoutReportsModeratedInput = {
   blocksReceived?: Prisma.BlockCreateNestedManyWithoutBlockedInput
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
 export type UserUncheckedCreateWithoutReportsModeratedInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1775,6 +2034,7 @@ export type UserUncheckedCreateWithoutReportsModeratedInput = {
   blocksReceived?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockedInput
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
   invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
 }
 
@@ -1797,11 +2057,14 @@ export type UserUpdateToOneWithWhereWithoutReportsFiledInput = {
 export type UserUpdateWithoutReportsFiledInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1813,17 +2076,21 @@ export type UserUpdateWithoutReportsFiledInput = {
   blocksReceived?: Prisma.BlockUpdateManyWithoutBlockedNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReportsFiledInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1835,6 +2102,7 @@ export type UserUncheckedUpdateWithoutReportsFiledInput = {
   blocksReceived?: Prisma.BlockUncheckedUpdateManyWithoutBlockedNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
@@ -1852,11 +2120,14 @@ export type UserUpdateToOneWithWhereWithoutReportsAboutInput = {
 export type UserUpdateWithoutReportsAboutInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1868,17 +2139,21 @@ export type UserUpdateWithoutReportsAboutInput = {
   blocksReceived?: Prisma.BlockUpdateManyWithoutBlockedNestedInput
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReportsAboutInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1890,6 +2165,7 @@ export type UserUncheckedUpdateWithoutReportsAboutInput = {
   blocksReceived?: Prisma.BlockUncheckedUpdateManyWithoutBlockedNestedInput
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
@@ -1907,11 +2183,14 @@ export type UserUpdateToOneWithWhereWithoutReportsModeratedInput = {
 export type UserUpdateWithoutReportsModeratedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
@@ -1923,17 +2202,21 @@ export type UserUpdateWithoutReportsModeratedInput = {
   blocksReceived?: Prisma.BlockUpdateManyWithoutBlockedNestedInput
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReportsModeratedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
   profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
   photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
   introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
@@ -1945,17 +2228,21 @@ export type UserUncheckedUpdateWithoutReportsModeratedInput = {
   blocksReceived?: Prisma.BlockUncheckedUpdateManyWithoutBlockedNestedInput
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
   invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
-export type UserCreateWithoutInvitationUsedInput = {
+export type UserCreateWithoutReportReviewsInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
@@ -1968,16 +2255,20 @@ export type UserCreateWithoutInvitationUsedInput = {
   reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
 }
 
-export type UserUncheckedCreateWithoutInvitationUsedInput = {
+export type UserUncheckedCreateWithoutReportReviewsInput = {
   id?: string
   email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
   passwordHash: string
   role?: $Enums.Role
   dateOfBirth: Date | string
   sessionVersion?: number
   createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
   profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
   photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
   introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
@@ -1990,6 +2281,127 @@ export type UserUncheckedCreateWithoutInvitationUsedInput = {
   reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
   reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
   reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
+}
+
+export type UserCreateOrConnectWithoutReportReviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReportReviewsInput, Prisma.UserUncheckedCreateWithoutReportReviewsInput>
+}
+
+export type UserUpsertWithoutReportReviewsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReportReviewsInput, Prisma.UserUncheckedUpdateWithoutReportReviewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReportReviewsInput, Prisma.UserUncheckedCreateWithoutReportReviewsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReportReviewsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReportReviewsInput, Prisma.UserUncheckedUpdateWithoutReportReviewsInput>
+}
+
+export type UserUpdateWithoutReportReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
+  introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
+  introductionsInbox?: Prisma.IntroductionUpdateManyWithoutToUserNestedInput
+  matchesAsFirst?: Prisma.MatchUpdateManyWithoutFirstUserNestedInput
+  matchesAsSecond?: Prisma.MatchUpdateManyWithoutSecondUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  blocksMade?: Prisma.BlockUpdateManyWithoutBlockerNestedInput
+  blocksReceived?: Prisma.BlockUpdateManyWithoutBlockedNestedInput
+  reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
+  reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReportReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
+  introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
+  introductionsInbox?: Prisma.IntroductionUncheckedUpdateManyWithoutToUserNestedInput
+  matchesAsFirst?: Prisma.MatchUncheckedUpdateManyWithoutFirstUserNestedInput
+  matchesAsSecond?: Prisma.MatchUncheckedUpdateManyWithoutSecondUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  blocksMade?: Prisma.BlockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocksReceived?: Prisma.BlockUncheckedUpdateManyWithoutBlockedNestedInput
+  reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
+  reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
+}
+
+export type UserCreateWithoutInvitationUsedInput = {
+  id?: string
+  email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  role?: $Enums.Role
+  dateOfBirth: Date | string
+  sessionVersion?: number
+  createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
+  introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
+  introductionsInbox?: Prisma.IntroductionCreateNestedManyWithoutToUserInput
+  matchesAsFirst?: Prisma.MatchCreateNestedManyWithoutFirstUserInput
+  matchesAsSecond?: Prisma.MatchCreateNestedManyWithoutSecondUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  blocksMade?: Prisma.BlockCreateNestedManyWithoutBlockerInput
+  blocksReceived?: Prisma.BlockCreateNestedManyWithoutBlockedInput
+  reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
+  reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
+}
+
+export type UserUncheckedCreateWithoutInvitationUsedInput = {
+  id?: string
+  email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  role?: $Enums.Role
+  dateOfBirth: Date | string
+  sessionVersion?: number
+  createdAt?: Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedCreateNestedManyWithoutUserInput
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
+  introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
+  introductionsInbox?: Prisma.IntroductionUncheckedCreateNestedManyWithoutToUserInput
+  matchesAsFirst?: Prisma.MatchUncheckedCreateNestedManyWithoutFirstUserInput
+  matchesAsSecond?: Prisma.MatchUncheckedCreateNestedManyWithoutSecondUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  blocksMade?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockerInput
+  blocksReceived?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockedInput
+  reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
+  reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
 }
 
 export type UserCreateOrConnectWithoutInvitationUsedInput = {
@@ -2011,6 +2423,128 @@ export type UserUpdateToOneWithWhereWithoutInvitationUsedInput = {
 export type UserUpdateWithoutInvitationUsedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutUserNestedInput
+  photos?: Prisma.PhotoUpdateManyWithoutUserNestedInput
+  introductionsSent?: Prisma.IntroductionUpdateManyWithoutFromUserNestedInput
+  introductionsInbox?: Prisma.IntroductionUpdateManyWithoutToUserNestedInput
+  matchesAsFirst?: Prisma.MatchUpdateManyWithoutFirstUserNestedInput
+  matchesAsSecond?: Prisma.MatchUpdateManyWithoutSecondUserNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  blocksMade?: Prisma.BlockUpdateManyWithoutBlockerNestedInput
+  blocksReceived?: Prisma.BlockUpdateManyWithoutBlockedNestedInput
+  reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
+  reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
+  reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInvitationUsedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessionVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountEmailTokens?: Prisma.AccountEmailTokenUncheckedUpdateManyWithoutUserNestedInput
+  profile?: Prisma.ProfileUncheckedUpdateOneWithoutUserNestedInput
+  photos?: Prisma.PhotoUncheckedUpdateManyWithoutUserNestedInput
+  introductionsSent?: Prisma.IntroductionUncheckedUpdateManyWithoutFromUserNestedInput
+  introductionsInbox?: Prisma.IntroductionUncheckedUpdateManyWithoutToUserNestedInput
+  matchesAsFirst?: Prisma.MatchUncheckedUpdateManyWithoutFirstUserNestedInput
+  matchesAsSecond?: Prisma.MatchUncheckedUpdateManyWithoutSecondUserNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  blocksMade?: Prisma.BlockUncheckedUpdateManyWithoutBlockerNestedInput
+  blocksReceived?: Prisma.BlockUncheckedUpdateManyWithoutBlockedNestedInput
+  reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
+  reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
+  reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
+}
+
+export type UserCreateWithoutAccountEmailTokensInput = {
+  id?: string
+  email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  role?: $Enums.Role
+  dateOfBirth: Date | string
+  sessionVersion?: number
+  createdAt?: Date | string
+  profile?: Prisma.ProfileCreateNestedOneWithoutUserInput
+  photos?: Prisma.PhotoCreateNestedManyWithoutUserInput
+  introductionsSent?: Prisma.IntroductionCreateNestedManyWithoutFromUserInput
+  introductionsInbox?: Prisma.IntroductionCreateNestedManyWithoutToUserInput
+  matchesAsFirst?: Prisma.MatchCreateNestedManyWithoutFirstUserInput
+  matchesAsSecond?: Prisma.MatchCreateNestedManyWithoutSecondUserInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  blocksMade?: Prisma.BlockCreateNestedManyWithoutBlockerInput
+  blocksReceived?: Prisma.BlockCreateNestedManyWithoutBlockedInput
+  reportsFiled?: Prisma.ReportCreateNestedManyWithoutReporterInput
+  reportsAbout?: Prisma.ReportCreateNestedManyWithoutSubjectInput
+  reportsModerated?: Prisma.ReportCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewCreateNestedManyWithoutModeratorInput
+  invitationUsed?: Prisma.InvitationCreateNestedOneWithoutRedeemedByInput
+}
+
+export type UserUncheckedCreateWithoutAccountEmailTokensInput = {
+  id?: string
+  email: string
+  username: string
+  emailVerifiedAt?: Date | string | null
+  passwordHash: string
+  role?: $Enums.Role
+  dateOfBirth: Date | string
+  sessionVersion?: number
+  createdAt?: Date | string
+  profile?: Prisma.ProfileUncheckedCreateNestedOneWithoutUserInput
+  photos?: Prisma.PhotoUncheckedCreateNestedManyWithoutUserInput
+  introductionsSent?: Prisma.IntroductionUncheckedCreateNestedManyWithoutFromUserInput
+  introductionsInbox?: Prisma.IntroductionUncheckedCreateNestedManyWithoutToUserInput
+  matchesAsFirst?: Prisma.MatchUncheckedCreateNestedManyWithoutFirstUserInput
+  matchesAsSecond?: Prisma.MatchUncheckedCreateNestedManyWithoutSecondUserInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  blocksMade?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockerInput
+  blocksReceived?: Prisma.BlockUncheckedCreateNestedManyWithoutBlockedInput
+  reportsFiled?: Prisma.ReportUncheckedCreateNestedManyWithoutReporterInput
+  reportsAbout?: Prisma.ReportUncheckedCreateNestedManyWithoutSubjectInput
+  reportsModerated?: Prisma.ReportUncheckedCreateNestedManyWithoutModeratorInput
+  reportReviews?: Prisma.ReportReviewUncheckedCreateNestedManyWithoutModeratorInput
+  invitationUsed?: Prisma.InvitationUncheckedCreateNestedOneWithoutRedeemedByInput
+}
+
+export type UserCreateOrConnectWithoutAccountEmailTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccountEmailTokensInput, Prisma.UserUncheckedCreateWithoutAccountEmailTokensInput>
+}
+
+export type UserUpsertWithoutAccountEmailTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccountEmailTokensInput, Prisma.UserUncheckedUpdateWithoutAccountEmailTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccountEmailTokensInput, Prisma.UserUncheckedCreateWithoutAccountEmailTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccountEmailTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccountEmailTokensInput, Prisma.UserUncheckedUpdateWithoutAccountEmailTokensInput>
+}
+
+export type UserUpdateWithoutAccountEmailTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2028,11 +2562,15 @@ export type UserUpdateWithoutInvitationUsedInput = {
   reportsFiled?: Prisma.ReportUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUpdateManyWithoutModeratorNestedInput
+  invitationUsed?: Prisma.InvitationUpdateOneWithoutRedeemedByNestedInput
 }
 
-export type UserUncheckedUpdateWithoutInvitationUsedInput = {
+export type UserUncheckedUpdateWithoutAccountEmailTokensInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2050,6 +2588,8 @@ export type UserUncheckedUpdateWithoutInvitationUsedInput = {
   reportsFiled?: Prisma.ReportUncheckedUpdateManyWithoutReporterNestedInput
   reportsAbout?: Prisma.ReportUncheckedUpdateManyWithoutSubjectNestedInput
   reportsModerated?: Prisma.ReportUncheckedUpdateManyWithoutModeratorNestedInput
+  reportReviews?: Prisma.ReportReviewUncheckedUpdateManyWithoutModeratorNestedInput
+  invitationUsed?: Prisma.InvitationUncheckedUpdateOneWithoutRedeemedByNestedInput
 }
 
 
@@ -2058,6 +2598,7 @@ export type UserUncheckedUpdateWithoutInvitationUsedInput = {
  */
 
 export type UserCountOutputType = {
+  accountEmailTokens: number
   photos: number
   introductionsSent: number
   introductionsInbox: number
@@ -2069,9 +2610,11 @@ export type UserCountOutputType = {
   reportsFiled: number
   reportsAbout: number
   reportsModerated: number
+  reportReviews: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  accountEmailTokens?: boolean | UserCountOutputTypeCountAccountEmailTokensArgs
   photos?: boolean | UserCountOutputTypeCountPhotosArgs
   introductionsSent?: boolean | UserCountOutputTypeCountIntroductionsSentArgs
   introductionsInbox?: boolean | UserCountOutputTypeCountIntroductionsInboxArgs
@@ -2083,6 +2626,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   reportsFiled?: boolean | UserCountOutputTypeCountReportsFiledArgs
   reportsAbout?: boolean | UserCountOutputTypeCountReportsAboutArgs
   reportsModerated?: boolean | UserCountOutputTypeCountReportsModeratedArgs
+  reportReviews?: boolean | UserCountOutputTypeCountReportReviewsArgs
 }
 
 /**
@@ -2093,6 +2637,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAccountEmailTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccountEmailTokenWhereInput
 }
 
 /**
@@ -2172,15 +2723,25 @@ export type UserCountOutputTypeCountReportsModeratedArgs<ExtArgs extends runtime
   where?: Prisma.ReportWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReportReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReportReviewWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  username?: boolean
+  emailVerifiedAt?: boolean
   passwordHash?: boolean
   role?: boolean
   dateOfBirth?: boolean
   sessionVersion?: boolean
   createdAt?: boolean
+  accountEmailTokens?: boolean | Prisma.User$accountEmailTokensArgs<ExtArgs>
   profile?: boolean | Prisma.User$profileArgs<ExtArgs>
   photos?: boolean | Prisma.User$photosArgs<ExtArgs>
   introductionsSent?: boolean | Prisma.User$introductionsSentArgs<ExtArgs>
@@ -2193,6 +2754,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   reportsFiled?: boolean | Prisma.User$reportsFiledArgs<ExtArgs>
   reportsAbout?: boolean | Prisma.User$reportsAboutArgs<ExtArgs>
   reportsModerated?: boolean | Prisma.User$reportsModeratedArgs<ExtArgs>
+  reportReviews?: boolean | Prisma.User$reportReviewsArgs<ExtArgs>
   invitationUsed?: boolean | Prisma.User$invitationUsedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -2200,6 +2762,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  username?: boolean
+  emailVerifiedAt?: boolean
   passwordHash?: boolean
   role?: boolean
   dateOfBirth?: boolean
@@ -2210,6 +2774,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
+  username?: boolean
+  emailVerifiedAt?: boolean
   passwordHash?: boolean
   role?: boolean
   dateOfBirth?: boolean
@@ -2220,6 +2786,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectScalar = {
   id?: boolean
   email?: boolean
+  username?: boolean
+  emailVerifiedAt?: boolean
   passwordHash?: boolean
   role?: boolean
   dateOfBirth?: boolean
@@ -2227,8 +2795,9 @@ export type UserSelectScalar = {
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "role" | "dateOfBirth" | "sessionVersion" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "emailVerifiedAt" | "passwordHash" | "role" | "dateOfBirth" | "sessionVersion" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  accountEmailTokens?: boolean | Prisma.User$accountEmailTokensArgs<ExtArgs>
   profile?: boolean | Prisma.User$profileArgs<ExtArgs>
   photos?: boolean | Prisma.User$photosArgs<ExtArgs>
   introductionsSent?: boolean | Prisma.User$introductionsSentArgs<ExtArgs>
@@ -2241,6 +2810,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   reportsFiled?: boolean | Prisma.User$reportsFiledArgs<ExtArgs>
   reportsAbout?: boolean | Prisma.User$reportsAboutArgs<ExtArgs>
   reportsModerated?: boolean | Prisma.User$reportsModeratedArgs<ExtArgs>
+  reportReviews?: boolean | Prisma.User$reportReviewsArgs<ExtArgs>
   invitationUsed?: boolean | Prisma.User$invitationUsedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -2250,6 +2820,7 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    accountEmailTokens: Prisma.$AccountEmailTokenPayload<ExtArgs>[]
     profile: Prisma.$ProfilePayload<ExtArgs> | null
     photos: Prisma.$PhotoPayload<ExtArgs>[]
     introductionsSent: Prisma.$IntroductionPayload<ExtArgs>[]
@@ -2262,11 +2833,14 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     reportsFiled: Prisma.$ReportPayload<ExtArgs>[]
     reportsAbout: Prisma.$ReportPayload<ExtArgs>[]
     reportsModerated: Prisma.$ReportPayload<ExtArgs>[]
+    reportReviews: Prisma.$ReportReviewPayload<ExtArgs>[]
     invitationUsed: Prisma.$InvitationPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     email: string
+    username: string
+    emailVerifiedAt: Date | null
     passwordHash: string
     role: $Enums.Role
     dateOfBirth: Date
@@ -2666,6 +3240,7 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  accountEmailTokens<T extends Prisma.User$accountEmailTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountEmailTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountEmailTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   profile<T extends Prisma.User$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$profileArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   photos<T extends Prisma.User$photosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$photosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   introductionsSent<T extends Prisma.User$introductionsSentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$introductionsSentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IntroductionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2678,6 +3253,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   reportsFiled<T extends Prisma.User$reportsFiledArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsFiledArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportsAbout<T extends Prisma.User$reportsAboutArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsAboutArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reportsModerated<T extends Prisma.User$reportsModeratedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportsModeratedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reportReviews<T extends Prisma.User$reportReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reportReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReportReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   invitationUsed<T extends Prisma.User$invitationUsedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$invitationUsedArgs<ExtArgs>>): Prisma.Prisma__InvitationClient<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2710,6 +3286,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
+  readonly username: Prisma.FieldRef<"User", 'String'>
+  readonly emailVerifiedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly dateOfBirth: Prisma.FieldRef<"User", 'DateTime'>
@@ -3108,6 +3686,30 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * User.accountEmailTokens
+ */
+export type User$accountEmailTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccountEmailToken
+   */
+  select?: Prisma.AccountEmailTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccountEmailToken
+   */
+  omit?: Prisma.AccountEmailTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountEmailTokenInclude<ExtArgs> | null
+  where?: Prisma.AccountEmailTokenWhereInput
+  orderBy?: Prisma.AccountEmailTokenOrderByWithRelationInput | Prisma.AccountEmailTokenOrderByWithRelationInput[]
+  cursor?: Prisma.AccountEmailTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccountEmailTokenScalarFieldEnum | Prisma.AccountEmailTokenScalarFieldEnum[]
+}
+
+/**
  * User.profile
  */
 export type User$profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3388,6 +3990,30 @@ export type User$reportsModeratedArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.ReportScalarFieldEnum | Prisma.ReportScalarFieldEnum[]
+}
+
+/**
+ * User.reportReviews
+ */
+export type User$reportReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReportReview
+   */
+  select?: Prisma.ReportReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReportReview
+   */
+  omit?: Prisma.ReportReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReportReviewInclude<ExtArgs> | null
+  where?: Prisma.ReportReviewWhereInput
+  orderBy?: Prisma.ReportReviewOrderByWithRelationInput | Prisma.ReportReviewOrderByWithRelationInput[]
+  cursor?: Prisma.ReportReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReportReviewScalarFieldEnum | Prisma.ReportReviewScalarFieldEnum[]
 }
 
 /**

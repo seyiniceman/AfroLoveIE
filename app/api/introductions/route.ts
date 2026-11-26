@@ -3,6 +3,7 @@ import { blockedEitherWay, getRequestUser, jsonError } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { ageOnDate } from "@/lib/validation";
 import { protectedPhoto } from "@/lib/media";
+import { visibleProfile } from "@/lib/profile-options";
 
 export async function GET(request: NextRequest) {
   const user = await getRequestUser(request);
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
       fromUser: {
         id: intro.fromUser.id,
         age: ageOnDate(intro.fromUser.dateOfBirth),
-        profile: intro.fromUser.profile,
+        profile: intro.fromUser.profile ? visibleProfile(intro.fromUser.profile) : null,
         photos: intro.fromUser.photos.map(protectedPhoto),
       },
       blocked: await blockedEitherWay(user.id, intro.fromUser.id),

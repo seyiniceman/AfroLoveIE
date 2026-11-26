@@ -1,0 +1,2 @@
+ALTER TABLE "Profile" ADD COLUMN "published" BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE "Profile" ALTER COLUMN "published" SET DEFAULT false;

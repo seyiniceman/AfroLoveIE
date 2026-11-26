@@ -8,10 +8,14 @@ node_modules
 .azure
 coverage
 private-backups
+INFRA/
 *.log
 *.jpeg
 *.jpg
 *.png
 *.webp
+!public/images/dublin-canal-couple.webp
 *.avif
 REA-NOTES.md
+
+mobile/

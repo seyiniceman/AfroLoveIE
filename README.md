@@ -32,11 +32,11 @@ Compose has local-only fallback credentials so the startup command works without
 
 Select **Continue as Amara**, **Continue as Daniel**, or **Continue as Moderator** on the sign-in page. Alternatively, sign in with:
 
-| Account | Email | Password |
+| Account | Username | Password |
 | --- | --- | --- |
-| Amara | `amara@example.test` | `LocalOnly!2026` |
-| Daniel | `daniel@example.test` | `LocalOnly!2026` |
-| Moderator | `moderator@example.test` | `LocalOnly!2026` |
+| Amara | `demo_amara` | `LocalOnly!2026` |
+| Daniel | `demo_daniel` | `LocalOnly!2026` |
+| Moderator | `demo_moderator` | `LocalOnly!2026` |
 
 Other fictional profiles are seeded for discovery. These demo identities and credentials are available only when the local development seed is explicitly enabled.
 
@@ -65,25 +65,30 @@ npm run dev
 
 Run `npm run test` and `npm run typecheck` for the local configuration tests and TypeScript check. With the local Compose app running and demo seeding enabled, run `npm run test:integration` to create, exercise, and delete synthetic accounts while checking server-side permissions. For a production build, use `npm run build` and `npm start`; do not enable demo data in production.
 
-In an invite-only environment, issue a one-use code from an operator shell with the app database configured: `npm run db:invite` (optional expiry in days, 1–365). The code is printed once and only its hash is stored; distribute it through an approved private channel.
+In local development, issue a one-use code with `npm run db:invite` (optional expiry in days, 1–365). In the production runner image, use `node scripts/create-invitation.mjs` from an authorised operator shell. The code is printed once and only its hash is stored; distribute it through an approved private channel.
 
 ## Private staging preparation
 
-The repository includes a staging profile for a private, loopback-bound host; it is not an external deployment or a production service. Copy `.env.staging.example` to an untracked `.env.staging`, supply unique database credentials, a random session secret, and the exact HTTPS origin configured at your private reverse proxy. Generate example secrets with Node.js:
+The repository includes a loopback-only staging rehearsal; it is not a hosted staging service. Copy `.env.local-staging.example` to the untracked `.env.staging`, replace the database password and session-secret placeholders, and keep `APP_ORIGIN=https://localhost:3443`. The app and database are isolated from the development Compose project. The local Caddy proxy uses an internal, self-signed certificate that browsers will not trust by default; this is only for local HTTPS and is not evidence of a trusted staging certificate.
 
 ```powershell
+Copy-Item .env.local-staging.example .env.staging
 node -e "const c=require('node:crypto'); console.log('SESSION_SECRET='+c.randomBytes(48).toString('base64url')); console.log('POSTGRES_PASSWORD='+c.randomBytes(32).toString('base64url'))"
 ```
 
-With the private host and proxy already configured, build and run the migration explicitly before starting the app:
+Build an immutable local image tag, apply migrations as an explicit release step, start the services, then verify health and runtime flags:
 
 ```powershell
-docker compose -p afroie-staging --env-file .env.staging build
-docker compose -p afroie-staging --env-file .env.staging run --rm app ./node_modules/.bin/prisma migrate deploy
-docker compose -p afroie-staging --env-file .env.staging up -d
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\release-staging.ps1 -ReleaseTag local-YYYYMMDD-HHMM
 ```
 
-The staging app binds to `127.0.0.1:3000`, disables demo data, and requires invitation codes. The database is not published to the host. This local profile does not supply HTTPS ingress, email, managed backups, monitoring, or a managed database; those must be selected and tested before any real beta. See [docs/BETA-LAUNCH.md](./docs/BETA-LAUNCH.md) for staging inputs and release/restore/rollback procedures.
+Open **https://localhost:3443**. The app binds to `127.0.0.1:3001`; PostgreSQL is not published to the host. Staging requires invitations and disables demo sign-in and demo seeding. To issue a one-use synthetic invite, run:
+
+```powershell
+docker compose --profile local-staging-https -p afroie-staging --env-file .env.staging exec app node scripts/create-invitation.mjs
+```
+
+This local profile does not provide a publicly trusted certificate, private hosted ingress, email/recovery, managed backups, monitoring, or a managed database. Those services and human approvals must be selected and verified before any real beta. See [docs/BETA-LAUNCH.md](./docs/BETA-LAUNCH.md) for the evidence-backed gates and release/restore/rollback procedures.
 
 ## Reference-informed requirements
 
@@ -129,3 +134,33 @@ The hero is an original vector illustration, not a photograph. Its alt text desc
 - `prisma/seed.ts` — local fictional demo accounts; refuses to run unless local development seeding is enabled.
 - `public/images/couple-hero.svg` — original vector hero asset.
 - `Dockerfile`, `compose.yaml`, `.dockerignore`, `.env.example` — local container setup.
+
+### Test registration and password recovery locally
+
+Start the stack with `docker compose up --build` and open http://localhost:3000.
+Register a fictional address and keep the browser signed in. Open the captured
+email at http://localhost:8025 and follow its verification link in the same browser.
+Choose **Confirm email**, then continue into profile setup. Mailpit stays on
+loopback and captures rather than delivers these messages. Seeded demo accounts
+are pre-verified. Existing non-demo accounts need to sign in and resend verification.
+
+Sign in with a username and password. Email is for verification and recovery.
+If you already had an account before this change, use **Forgot username or
+password?** and enter your account email. The captured recovery message shows
+your assigned username and includes a reset link if you need it. Run
+`npm run test:integration` with the stack up to exercise both email flows and
+the member journey. A real email provider and production abuse controls must
+be configured before enabling this registration flow on a hosted environment.
+
+### Guided profile setup
+
+After verifying an email, new members complete Basics, About me, Photos,
+What I’m looking for, and Preview. Save and continue stores each completed
+step while the member remains outside discovery. Publish profile uses the same
+public fields as the preview. Sex stays private. Gender and ethnicity appear
+only if the member turns on the corresponding visibility control.
+
+Discovery starts with members in the same broad area and at least one shared
+intention. Marriage-minded and long-term dating are compatible. Safety and
+privacy lets a published member pause discovery without closing their existing
+introductions or matches.
